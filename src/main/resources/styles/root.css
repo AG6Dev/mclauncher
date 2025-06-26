@@ -1,0 +1,37 @@
+#rootPane {
+    -fx-background-color: white;
+    -fx-background-radius: 30;
+    -fx-border-radius: 30;
+    -fx-padding: 20;
+}
+
+#closeIcon {
+    -mfx-color: red;
+    -fx-opacity: 0.5;
+}
+
+#closeIcon:hover {
+    -fx-opacity: 1.0;
+}
+
+#minimiseIcon {
+    -mfx-color: #FFBF37;
+    -fx-opacity: 0.5;
+}
+
+#minimiseIcon:hover {
+    -fx-opacity: 1.0;
+}
+
+#alwaysOnTopIcon {
+    -mfx-color: purple;
+    -fx-opacity: 0.5;
+}
+
+#alwaysOnTopIcon:hover {
+    -fx-opacity: 1.0;
+}
+
+#alwaysOnTopIcon:always-on-top {
+    -fx-opacity: 1.0;
+}
