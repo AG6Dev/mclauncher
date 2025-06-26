@@ -4,6 +4,7 @@ import dev.ag6.mclauncher.MCLauncher;
 import dev.ag6.mclauncher.content.HasView;
 import io.github.palexdev.mfxresources.fonts.IconDescriptor;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
+import javafx.animation.FadeTransition;
 import javafx.css.PseudoClass;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
