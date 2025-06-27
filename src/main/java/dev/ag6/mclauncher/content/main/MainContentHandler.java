@@ -2,19 +2,18 @@ package dev.ag6.mclauncher.content.main;
 
 import dev.ag6.mclauncher.MCLauncher;
 import dev.ag6.mclauncher.content.HasView;
-import io.github.palexdev.mfxresources.fonts.IconDescriptor;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-import javafx.animation.FadeTransition;
 import javafx.css.PseudoClass;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 public class MainContentHandler implements HasView {
     private final BorderPane root;
     private final MCLauncher launcher;
+
+    private double xOffset = 0;
+    private double yOffset = 0;
 
     public MainContentHandler(MCLauncher launcher) {
         this.launcher = launcher;
@@ -34,6 +33,9 @@ public class MainContentHandler implements HasView {
         var header = new HBox();
         header.setId("rootHeader");
 
+        var buttons = new HBox();
+        buttons.setId("headerButtons");
+
         var closeIcon = createWindowControlIcon("closeIcon");
         var alwaysOnTopIcon = createWindowControlIcon("alwaysOnTopIcon");
         var minimiseIcon = createWindowControlIcon("minimiseIcon");
@@ -45,8 +47,25 @@ public class MainContentHandler implements HasView {
             launcher.getPrimaryStage().setAlwaysOnTop(!isAlwaysOnTop);
         });
         minimiseIcon.setOnMouseClicked(event -> launcher.getPrimaryStage().setIconified(true));
+        buttons.getChildren().addAll(minimiseIcon, alwaysOnTopIcon, closeIcon);
 
-        header.getChildren().addAll(closeIcon, alwaysOnTopIcon, minimiseIcon);
+        var title = new Label("MCLauncher | Version: " + MCLauncher.VERSION);
+        title.setId("headerTitle");
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        header.setOnMousePressed(event -> {
+            xOffset = this.launcher.getPrimaryStage().getX() - event.getScreenX();
+            yOffset = this.launcher.getPrimaryStage().getY() - event.getScreenY();
+        });
+
+        header.setOnMouseDragged(event -> {
+            this.launcher.getPrimaryStage().setX(event.getScreenX() + xOffset);
+            this.launcher.getPrimaryStage().setY(event.getScreenY() + yOffset);
+        });
+
+        header.getChildren().addAll(title, spacer, buttons);
 
         return header;
     }
@@ -59,7 +78,7 @@ public class MainContentHandler implements HasView {
     private MFXFontIcon createWindowControlIcon(String id) {
         var icon = new MFXFontIcon("fas-circle");
         icon.setId(id);
-        icon.setSize(20);
+        icon.setSize(15);
         return icon;
     }
 }

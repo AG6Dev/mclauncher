@@ -1,16 +1,23 @@
 package dev.ag6.mclauncher;
 
-import dev.ag6.mclauncher.instance.InstanceManager;
 import dev.ag6.mclauncher.content.main.MainContentHandler;
+import dev.ag6.mclauncher.instance.InstanceManager;
 import fr.brouillard.oss.cssfx.CSSFX;
 import javafx.application.Application;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.Getter;
 
+import java.util.stream.Stream;
+
 public class MCLauncher extends Application {
+    public static final String VERSION = "0.0.1";
+
     @Getter
     private Stage primaryStage;
 
