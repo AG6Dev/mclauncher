@@ -4,16 +4,11 @@ import dev.ag6.mclauncher.content.main.MainContentHandler;
 import dev.ag6.mclauncher.instance.InstanceManager;
 import fr.brouillard.oss.cssfx.CSSFX;
 import javafx.application.Application;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.Getter;
-
-import java.util.stream.Stream;
 
 public class MCLauncher extends Application {
     public static final String VERSION = "0.0.1";
@@ -21,7 +16,8 @@ public class MCLauncher extends Application {
     @Getter
     private Stage primaryStage;
 
-    private final MainContentHandler contentHandler = new MainContentHandler(this);
+    private MainContentHandler contentHandler;
+    @Getter
     private InstanceManager instanceManager;
 
     @Override
@@ -32,6 +28,7 @@ public class MCLauncher extends Application {
         primaryStage.initStyle(StageStyle.TRANSPARENT);
 
         this.instanceManager = new InstanceManager(this.getConfigDirectory());
+        this.contentHandler = new MainContentHandler(this);
 
         var scene = new Scene(contentHandler.getView(), 1280, 720);
         scene.setFill(Color.TRANSPARENT);

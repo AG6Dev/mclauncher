@@ -7,16 +7,23 @@ import javafx.css.PseudoClass;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import lombok.Getter;
 
 public class MainContentHandler implements HasView {
-    private final BorderPane root;
+    @Getter
     private final MCLauncher launcher;
+
+    private final BorderPane root;
+    private final SideBarComponent sidebar;
 
     private double xOffset = 0;
     private double yOffset = 0;
 
     public MainContentHandler(MCLauncher launcher) {
         this.launcher = launcher;
+
+        this.sidebar = new SideBarComponent(this);
 
         this.root = new BorderPane();
         this.root.getStylesheets().add("styles/root.css");
@@ -26,12 +33,16 @@ public class MainContentHandler implements HasView {
         this.root.setCenter(new Label("Test Label"));
 
         var header = createHeader();
+
         this.root.setTop(header);
+        this.root.setLeft(sidebar);
     }
 
     public HBox createHeader() {
         var header = new HBox();
         header.setId("rootHeader");
+
+        header.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, null, new BorderWidths(1))));
 
         var buttons = new HBox();
         buttons.setId("headerButtons");
@@ -68,6 +79,11 @@ public class MainContentHandler implements HasView {
         header.getChildren().addAll(title, spacer, buttons);
 
         return header;
+    }
+
+    public void setContent(HasView newPage) {
+        if(newPage == null) return;
+        this.root.setCenter(newPage.getView());
     }
 
     @Override
