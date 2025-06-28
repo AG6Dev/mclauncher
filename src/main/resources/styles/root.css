@@ -1,51 +1,15 @@
 @import "../font/roboto.css";
 
 #rootPane {
-    -fx-background-color: white;
+    -fx-background-color: #141617;
     -fx-background-radius: 30;
     -fx-border-radius: 30;
 
     -fx-font-family: Roboto;
     -fx-font-size: 12px;
+    -fx-text-fill: white;
 }
 
-#rootHeader {
-    -fx-alignment: center-left;
-    -fx-padding: 10 20 10 20;
-}
-
-#headerButtons {
-    -fx-alignment: center-right;
-    -fx-spacing: 10;
-}
-
-#closeIcon {
-    -mfx-color: red;
-    -fx-opacity: 0.5;
-}
-
-#closeIcon:hover {
-    -fx-opacity: 1.0;
-}
-
-#minimiseIcon {
-    -mfx-color: #FFBF37;
-    -fx-opacity: 0.5;
-}
-
-#minimiseIcon:hover {
-    -fx-opacity: 1.0;
-}
-
-#alwaysOnTopIcon {
-    -mfx-color: purple;
-    -fx-opacity: 0.5;
-}
-
-#alwaysOnTopIcon:hover {
-    -fx-opacity: 1.0;
-}
-
-#alwaysOnTopIcon:always-on-top {
-    -fx-opacity: 1.0;
+.label {
+    -fx-text-fill: white;
 }

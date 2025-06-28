@@ -1,0 +1,40 @@
+#header {
+    -fx-alignment: center-left;
+    -fx-padding: 10 20 10 20;
+}
+
+#headerButtons {
+    -fx-alignment: center-right;
+    -fx-spacing: 10;
+}
+
+#closeIcon {
+    -mfx-color: #ff0000;
+    -fx-opacity: 0.5;
+}
+
+#closeIcon:hover {
+    -fx-opacity: 1.0;
+}
+
+#minimiseIcon {
+    -mfx-color: #FFBF37;
+    -fx-opacity: 0.5;
+}
+
+#minimiseIcon:hover {
+    -fx-opacity: 1.0;
+}
+
+#alwaysOnTopIcon {
+    -mfx-color: purple;
+    -fx-opacity: 0.5;
+}
+
+#alwaysOnTopIcon:hover {
+    -fx-opacity: 1.0;
+}
+
+#alwaysOnTopIcon:always-on-top {
+    -fx-opacity: 1.0;
+}
