@@ -3,8 +3,10 @@ package dev.ag6.mclauncher.content.main;
 import dev.ag6.mclauncher.content.HasView;
 import dev.ag6.mclauncher.content.instances.InstancesView;
 import io.github.palexdev.materialfx.controls.MFXIconWrapper;
-import io.github.palexdev.materialfx.controls.MFXRectangleToggleNode;
+import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 
@@ -22,18 +24,25 @@ public class SideBarComponent extends VBox {
         this.getStylesheets().add("styles/sidebar.css");
         this.setPrefWidth(200);
 
-        this.getChildren().add(createPageButton("Instances", "fas-house", new InstancesView(handler.getLauncher().getInstanceManager())));
+        ToggleButton instancesButton = this.createPageButton("Instances", "fas-house", new InstancesView(handler.getLauncher().getInstanceManager()));
+        Button createInstanceButton = this.createInstanceButton();
+
+        this.getChildren().addAll(instancesButton, createInstanceButton);
     }
 
-    private MFXRectangleToggleNode createPageButton(String text, String icon, HasView newPage) {
-        var wrapper = new MFXIconWrapper(icon, 24, 32);
-        var btn = new MFXRectangleToggleNode(text, wrapper);
+    private ToggleButton createPageButton(String text, String icon, HasView newPage) {
+        ToggleButton button = new ToggleButton(text);
+        button.setGraphic(new MFXIconWrapper(icon, 20, 20));
+        button.getStyleClass().addAll("nav-button", "nav-page-button");
+        button.setAlignment(Pos.CENTER_LEFT);
+        button.setOnAction(event -> this.handler.setContent(newPage));
+        return button;
+    }
 
-        btn.setAlignment(Pos.CENTER_LEFT);
-        btn.setToggleGroup(selectedPageGroup);
-        btn.setOnAction(event -> this.handler.setContent(newPage));
-
-        return btn;
+    private Button createInstanceButton() {
+        Button button = new Button("Create Instance", new MFXFontIcon("fas-plus"));
+        button.getStyleClass().addAll("nav-button", "nav-create-instance-button");
+        return button;
     }
 
 }

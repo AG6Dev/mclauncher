@@ -14,6 +14,11 @@
 }
 
 #closeIcon:hover {
+    -fx-opacity: 0.8;
+}
+
+#closeIcon:pressed {
+    -mfx-color: #ff0000;
     -fx-opacity: 1.0;
 }
 

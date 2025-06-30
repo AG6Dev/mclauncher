@@ -13,6 +13,8 @@ public class HeaderComponent extends HBox {
     private final MFXFontIcon closeIcon, minimiseIcon, alwaysOnTopIcon;
     private final Label titleLabel;
 
+    private boolean canDrag = true;
+
     private double xOffset = 0;
     private double yOffset = 0;
 
@@ -27,13 +29,22 @@ public class HeaderComponent extends HBox {
         this.alwaysOnTopIcon = createWindowControlIcon("alwaysOnTopIcon");
         this.minimiseIcon = createWindowControlIcon("minimiseIcon");
 
-        this.closeIcon.setOnMouseClicked(event -> launcher.getPrimaryStage().close());
-        this.alwaysOnTopIcon.setOnMouseClicked(event -> {
+        this.closeIcon.setOnMousePressed(event -> this.canDrag = false);
+        this.closeIcon.setOnMouseReleased(event -> launcher.getPrimaryStage().close());
+
+        this.alwaysOnTopIcon.setOnMousePressed(event -> {
+            this.canDrag = false;
             boolean isAlwaysOnTop = launcher.getPrimaryStage().isAlwaysOnTop();
             alwaysOnTopIcon.pseudoClassStateChanged(PseudoClass.getPseudoClass("always-on-top"), !isAlwaysOnTop);
             launcher.getPrimaryStage().setAlwaysOnTop(!isAlwaysOnTop);
         });
-        this.minimiseIcon.setOnMouseClicked(event -> launcher.getPrimaryStage().setIconified(true));
+        this.alwaysOnTopIcon.setOnMouseReleased(event -> this.canDrag = true);
+
+        this.minimiseIcon.setOnMouseReleased(event -> {
+            this.canDrag = true;
+            launcher.getPrimaryStage().setIconified(true);
+        });
+        this.minimiseIcon.setOnMousePressed(event -> this.canDrag = false);
         this.buttons.getChildren().addAll(minimiseIcon, alwaysOnTopIcon, closeIcon);
 
         this.titleLabel = new Label("MCLauncher " + MCLauncher.VERSION);
@@ -47,6 +58,10 @@ public class HeaderComponent extends HBox {
         });
 
         this.setOnMouseDragged(event -> {
+            if (!canDrag) {
+                return;
+            }
+
             launcher.getPrimaryStage().setX(event.getScreenX() + xOffset);
             launcher.getPrimaryStage().setY(event.getScreenY() + yOffset);
         });
