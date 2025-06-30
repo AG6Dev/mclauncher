@@ -27,7 +27,7 @@ application {
 
 javafx {
     version = '21'
-    modules = ['javafx.controls', 'javafx.fxml']
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.web', 'javafx.media']
 }
 
 dependencies {
@@ -36,6 +36,8 @@ dependencies {
     implementation('io.github.palexdev:materialfx:11.17.0')
 
     implementation('fr.brouillard.oss:cssfx:11.4.0')
+
+    implementation files('libs/scenicview.jar')
 
     annotationProcessor('org.projectlombok:lombok:1.18.34')
     compileOnly('org.projectlombok:lombok:1.18.34')

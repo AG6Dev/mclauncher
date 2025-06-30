@@ -42,6 +42,7 @@ public class SideBarComponent extends VBox {
     private Button createInstanceButton() {
         Button button = new Button("Create Instance", new MFXFontIcon("fas-plus"));
         button.getStyleClass().addAll("nav-button", "nav-create-instance-button");
+        button.setOnAction(event -> this.handler.getLauncher().getInstanceManager().createInstance());
         return button;
     }
 

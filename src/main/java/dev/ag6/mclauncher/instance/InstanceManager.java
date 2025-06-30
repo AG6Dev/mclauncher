@@ -18,4 +18,9 @@ public class InstanceManager {
             this.instances.add(inst);
         }
     }
+
+    public void createInstance() {
+        var newInstance = new GameInstance("New Instance", "This is a new instance.");
+        this.instances.add(newInstance);
+    }
 }

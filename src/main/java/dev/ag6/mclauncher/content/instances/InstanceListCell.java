@@ -21,7 +21,7 @@ public class InstanceListCell extends ListCell<GameInstance> {
     private final HBox buttonContainer = new HBox();
     private final Button editButton = new Button("", new MFXFontIcon("fas-pencil"));
     private final Button startButton = new Button("", new MFXFontIcon("fas-play"));
-    private final FadeTransition fadeIn = new FadeTransition(Duration.millis(100), buttonContainer);
+    private final FadeTransition fadeIn = new FadeTransition(Duration.millis(200), buttonContainer);
 
     public InstanceListCell() {
         this.getStylesheets().add("styles/instance-list-cell.css");
@@ -59,7 +59,7 @@ public class InstanceListCell extends ListCell<GameInstance> {
 
     private void setupEventHandlers() {
         setOnMouseEntered(e -> {
-            if(!isEmpty() && getItem() != null) {
+            if (!isEmpty() && getItem() != null) {
                 fadeIn.play();
                 buttonContainer.setVisible(true);
                 buttonContainer.setManaged(true);

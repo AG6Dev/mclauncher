@@ -1,8 +1,6 @@
 #sidebar {
     -fx-padding: 10;
     -fx-alignment: top-center;
-
-    -fx-border-color: yellow;
     -fx-spacing: 10px;
 }
 

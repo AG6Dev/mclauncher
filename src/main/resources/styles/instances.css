@@ -3,18 +3,18 @@
 }
 
 .label {
-    -fx-text-fill: black;
+    -fx-text-fill: white;
 }
 
 .list-view {
     -fx-padding: 3;
-    -fx-background-color: darkred;
+    -fx-background-color: transparent;
     -fx-background-radius: 0 0 30 0;
 }
 
 .list-cell {
     -fx-cell-size: 80;
-    -fx-background-color: transparent, -fx-background;
+    -fx-background-color: transparent, #25252b;
     -fx-background-radius: 20px;
     -fx-background-insets: 0, 10;
 
@@ -23,7 +23,7 @@
 }
 
 .list-cell:empty {
-    -fx-padding: 2px ;
-    -fx-background-color: transparent ;
-    -fx-background-insets: 0 ;
+    -fx-padding: 2px;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
 }
