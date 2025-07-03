@@ -4,6 +4,7 @@ plugins {
     id 'org.javamodularity.moduleplugin' version '1.8.12'
     id 'org.openjfx.javafxplugin' version '0.0.13'
     id 'org.beryx.jlink' version '2.25.0'
+    id 'org.jetbrains.kotlin.jvm'
 }
 
 group 'dev.ag6'
@@ -13,8 +14,6 @@ repositories {
     mavenCentral()
 }
 
-sourceCompatibility = '21'
-targetCompatibility = '21'
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -41,6 +40,7 @@ dependencies {
 
     annotationProcessor('org.projectlombok:lombok:1.18.34')
     compileOnly('org.projectlombok:lombok:1.18.34')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 jlink {
@@ -53,4 +53,7 @@ jlink {
 
 jlinkZip {
     group = 'distribution'
+}
+kotlin {
+    jvmToolchain(21)
 }

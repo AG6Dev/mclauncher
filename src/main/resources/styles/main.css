@@ -1,6 +1,6 @@
 @import "../font/roboto.css";
 
-#rootPane {
+.root-pane {
     -fx-background-color: #141617;
     -fx-background-radius: 30;
     -fx-border-radius: 30;

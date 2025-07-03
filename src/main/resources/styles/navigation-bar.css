@@ -1,4 +1,4 @@
-#sidebar {
+.navigation-bar {
     -fx-padding: 10;
     -fx-alignment: top-center;
     -fx-spacing: 10px;
@@ -35,15 +35,15 @@
     -mfx-color: white;
 }
 
-.nav-create-instance-button {
+.create-instance-button {
     -fx-background-color: #2596be;
 }
 
-.nav-create-instance-button:hover {
+.create-instance-button:hover {
     -fx-background-color: #2a9dc6;
 }
 
-.nav-create-instance-button:pressed {
+.create-instance-button:pressed {
     -fx-background-color: #1f7a9c;
 }
 
