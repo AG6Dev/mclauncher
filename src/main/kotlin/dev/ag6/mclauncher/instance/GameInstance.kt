@@ -1,19 +1,48 @@
 package dev.ag6.mclauncher.instance
 
-import javafx.beans.property.SimpleStringProperty
+import com.google.gson.TypeAdapter
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonWriter
+import dev.ag6.mclauncher.utils.property.FXObjectProperty
+import dev.ag6.mclauncher.utils.property.FXStringProperty
+import java.util.*
 
-class GameInstance(name: String, description: String) {
-    private val _name = SimpleStringProperty(name)
-    var name: String
-        get() = _name.get()
-        set(value) = _name.set(value)
+class GameInstance(uuid: UUID, name: String, description: String) {
+    val name: String by FXStringProperty(name)
 
-    fun nameProperty() = _name
+    val description: String by FXStringProperty(description)
 
-    private val _description = SimpleStringProperty(description)
-    var description: String
-        get() = _description.get()
-        set(value) = _description.set(value)
+    val uuid: UUID by FXObjectProperty(uuid)
+}
 
-    fun descriptionProperty() = _description
+object GameInstanceAdapter : TypeAdapter<GameInstance>() {
+    override fun write(out: JsonWriter?, value: GameInstance?) {
+        if (out == null || value == null) return
+
+        out.beginObject()
+        out.name("uuid").value(value.uuid.toString())
+        out.name("name").value(value.name)
+        out.name("description").value(value.description)
+        out.endObject()
+    }
+
+    override fun read(reader: JsonReader?): GameInstance {
+        if (reader == null) return GameInstance(UUID.randomUUID(), "Unknown", "No description")
+
+        var uuid: UUID? = null
+        var name: String? = null
+        var description: String? = null
+
+        reader.beginObject()
+        while (reader.hasNext()) {
+            when (reader.nextName()) {
+                "uuid" -> uuid = UUID.fromString(reader.nextString())
+                "name" -> name = reader.nextString()
+                "description" -> description = reader.nextString()
+            }
+        }
+        reader.endObject()
+
+        return GameInstance(uuid ?: UUID.randomUUID(), name ?: "Unknown", description ?: "No description")
+    }
 }

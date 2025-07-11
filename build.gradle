@@ -5,6 +5,7 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.13'
     id 'org.beryx.jlink' version '2.25.0'
     id 'org.jetbrains.kotlin.jvm'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '2.2.0'
 }
 
 group 'dev.ag6'
@@ -12,6 +13,10 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+
+    maven {
+        url 'https://jitpack.io'
+    }
 }
 
 
@@ -38,9 +43,13 @@ dependencies {
 
     implementation files('libs/scenicview.jar')
 
-    annotationProcessor('org.projectlombok:lombok:1.18.34')
-    compileOnly('org.projectlombok:lombok:1.18.34')
+    implementation("com.google.code.gson:gson:2.10.1")
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
+
+    implementation 'com.github.Livefront:gson-kotlin-adapter:0.3.0'
 }
 
 jlink {

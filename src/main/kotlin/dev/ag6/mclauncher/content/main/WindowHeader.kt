@@ -33,7 +33,7 @@ class WindowHeader(private val launcher: MCLauncher) : VBox() {
 
         onMousePressed = EventHandler { event ->
             if (canDrag) {
-                xOffset = launcher.primaryStage.x - event.screenX;
+                xOffset = launcher.primaryStage.x - event.screenX
                 yOffset = launcher.primaryStage.y - event.screenY
             }
         }
@@ -49,13 +49,11 @@ class WindowHeader(private val launcher: MCLauncher) : VBox() {
     }
 
     private fun createWindowControl(iconId: String, color: Color): MFXIconWrapper =
-        MFXIconWrapper("fas-circle", 15.0, color, 15.0).apply {
-            id = iconId
-        }
+        MFXIconWrapper("fas-circle", 15.0, color, 15.0).styleAs(iconId)
 
     private fun createButtonContainer(): HBox = HBox().styleAs("window-header-buttons").apply {
         children += createWindowControl("minimize-icon", Color.web("#FFBF37")).apply {
-            onMousePressed = EventHandler { _ -> canDrag = false }
+            onMousePressed = EventHandler { canDrag = false }
             onMouseReleased = EventHandler { _ ->
                 canDrag = true
                 launcher.setIconified(true)
@@ -63,8 +61,8 @@ class WindowHeader(private val launcher: MCLauncher) : VBox() {
         }
 
         children += createWindowControl("always-on-top-icon", Color.web("#800080")).apply {
-            onMousePressed = EventHandler { _ -> canDrag = false }
-            onMouseReleased = EventHandler { _ ->
+            onMousePressed = EventHandler { canDrag = false }
+            onMouseReleased = EventHandler {
                 canDrag = true
                 val currentValue = launcher.alwaysOnTop
                 this.pseudoClassStateChanged(PseudoClass.getPseudoClass("always-on-top"), !currentValue)
@@ -73,8 +71,8 @@ class WindowHeader(private val launcher: MCLauncher) : VBox() {
         }
 
         children += createWindowControl("close-icon", Color.RED).apply {
-            onMousePressed = EventHandler { _ -> canDrag = false }
-            onMouseReleased = EventHandler { _ -> Platform.exit() }
+            onMousePressed = EventHandler { canDrag = false }
+            onMouseReleased = EventHandler { Platform.exit() }
         }
     }
 
