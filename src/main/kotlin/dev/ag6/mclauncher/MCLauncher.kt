@@ -19,6 +19,7 @@ class MCLauncher : Application() {
         private set
 
     lateinit var primaryStage: Stage
+        private set
 
     var alwaysOnTop: Boolean = false
         get() = primaryStage.isAlwaysOnTop

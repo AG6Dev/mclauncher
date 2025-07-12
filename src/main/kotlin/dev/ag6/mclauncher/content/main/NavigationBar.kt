@@ -1,7 +1,6 @@
 package dev.ag6.mclauncher.content.main
 
 import dev.ag6.mclauncher.content.ViewBuilder
-import dev.ag6.mclauncher.content.instances.InstancesView
 import dev.ag6.mclauncher.utils.styleAs
 import io.github.palexdev.materialfx.controls.MFXIconWrapper
 import javafx.event.EventHandler
@@ -20,16 +19,21 @@ class NavigationBar(private val mainContent: MainContent) : VBox() {
 
         prefWidth = 200.0
 
-        children += createPageButton("Instances", "fas-cubes", InstancesView(mainContent.mcLauncher.instanceManager))
+//        children += createPageButton("Instances", "fas-cubes", InstancesView(mainContent.mcLauncher.instanceManager))
         children += createInstanceButton()
     }
 
-    private fun createPageButton(msg: String, icon: String, viewBuilder: ViewBuilder): ToggleButton =
+    private fun createPageButton(msg: String, icon: String, viewBuilder: ViewBuilder?): ToggleButton =
         ToggleButton().styleAs("nav-button").apply {
             graphic = MFXIconWrapper(icon, 20.0, 20.0)
             text = msg
             alignment = Pos.CENTER_LEFT
             toggleGroup = selectedPageToggleGroup
+
+            onAction = EventHandler {
+                println("Changing content to $msg")
+                mainContent.root.center = viewBuilder?.build()
+            }
         }
 
     private fun createInstanceButton(): Button = Button().styleAs("nav-button", "create-instance-button").apply {
