@@ -2,15 +2,25 @@ package dev.ag6.mclauncher
 
 import dev.ag6.mclauncher.content.main.MainContent
 import dev.ag6.mclauncher.instance.InstanceManager
+import dev.ag6.mclauncher.utils.getAllDescendants
 import fr.brouillard.oss.cssfx.CSSFX
 import javafx.application.Application
 import javafx.application.Application.launch
+import javafx.event.EventHandler
 import javafx.scene.Scene
 import javafx.scene.image.Image
+import javafx.scene.input.KeyCode
+import javafx.scene.layout.Border
+import javafx.scene.layout.BorderStroke
+import javafx.scene.layout.BorderStrokeStyle
+import javafx.scene.layout.Region
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import kotlinx.coroutines.runBlocking
+import java.awt.Desktop
+import java.io.File
+import java.nio.file.FileSystem
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -42,7 +52,7 @@ class MCLauncher : Application() {
         instanceManager = InstanceManager(this.getDataDirectory())
 
         with(primaryStage) {
-            title = "MCLauncher"
+            title = "Cum"
             isResizable = false
             icons += Image(MCLauncher::class.java.classLoader.getResourceAsStream("icon.png"))
             scene = Scene(MainContent(this@MCLauncher).build()).apply { fill = Color.TRANSPARENT }
@@ -51,6 +61,8 @@ class MCLauncher : Application() {
 
             show()
         }
+
+//        applyBorderToAll()
     }
 
     override fun stop() {
@@ -63,6 +75,15 @@ class MCLauncher : Application() {
 
     fun setIconified(value: Boolean) {
         primaryStage.isIconified = value
+    }
+
+    private fun applyBorderToAll() {
+        fun randomColor(): Color {
+            return Color.color(Math.random(), Math.random(), Math.random())
+        }
+
+        primaryStage.scene.root.getAllDescendants().filterIsInstance<Region>()
+            .forEach { it.border = Border(BorderStroke(randomColor(), BorderStrokeStyle.SOLID, null, null)) }
     }
 
     private fun getDataDirectory(): String = System.getProperty("user.home") + "/.mclauncher"

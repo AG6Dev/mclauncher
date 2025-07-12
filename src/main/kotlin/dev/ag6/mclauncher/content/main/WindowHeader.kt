@@ -6,7 +6,6 @@ import io.github.palexdev.materialfx.controls.MFXIconWrapper
 import javafx.application.Platform
 import javafx.css.PseudoClass
 import javafx.event.EventHandler
-import javafx.geometry.Pos
 import javafx.scene.control.Label
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
@@ -14,7 +13,7 @@ import javafx.scene.layout.Region
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 
-class WindowHeader(private val launcher: MCLauncher) : VBox() {
+class WindowHeader(private val launcher: MCLauncher) : HBox() {
     private var xOffset = 0.0
     private var yOffset = 0.0
 
@@ -23,13 +22,11 @@ class WindowHeader(private val launcher: MCLauncher) : VBox() {
     init {
         styleAs("window-header")
         stylesheets += "styles/window-header.css"
-        alignment = Pos.CENTER_LEFT
 
         val buttonContainer = createButtonContainer()
         val title = createTitle()
-        val spacer: Region = Region().apply {
-            HBox.setHgrow(this, Priority.ALWAYS)
-        }
+        val spacer = Region()
+        setHgrow(spacer, Priority.ALWAYS)
 
         onMousePressed = EventHandler { event ->
             if (canDrag) {

@@ -20,8 +20,12 @@ repositories {
 }
 
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+}
+
+tasks.withType(Jar).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 application {
@@ -31,7 +35,7 @@ application {
 
 javafx {
     version = '21'
-    modules = ['javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.web', 'javafx.media']
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.web', 'javafx.media', 'javafx.swing']
 }
 
 dependencies {
@@ -47,9 +51,6 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
-
-    implementation 'com.github.Livefront:gson-kotlin-adapter:0.3.0'
 }
 
 jlink {
