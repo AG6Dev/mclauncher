@@ -2,6 +2,7 @@ package dev.ag6.mclauncher
 
 import dev.ag6.mclauncher.content.main.MainContent
 import dev.ag6.mclauncher.instance.InstanceManager
+import dev.ag6.mclauncher.minecraft.GameVersionHandler
 import dev.ag6.mclauncher.utils.getAllDescendants
 import fr.brouillard.oss.cssfx.CSSFX
 import javafx.application.Application
@@ -30,6 +31,9 @@ class MCLauncher : Application() {
     lateinit var primaryStage: Stage
         private set
 
+    lateinit var versionHandler: GameVersionHandler
+        private set
+
     var alwaysOnTop: Boolean = false
         get() = primaryStage.isAlwaysOnTop
         set(it) {
@@ -48,7 +52,10 @@ class MCLauncher : Application() {
             Files.exists(Paths.get(this.getDataDirectory())) == false
 
         this.primaryStage = primaryStage
-        instanceManager = InstanceManager(this.getDataDirectory())
+        this.instanceManager = InstanceManager(this.getDataDirectory())
+
+        this.versionHandler = GameVersionHandler()
+        this.versionHandler.fetchGameVersions()
 
         with(primaryStage) {
             title = "MCLauncher $VERSION"
