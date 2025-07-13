@@ -10,7 +10,6 @@ import javafx.scene.control.Label
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.layout.Region
-import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 
 class WindowHeader(private val launcher: MCLauncher) : HBox() {

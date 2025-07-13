@@ -9,7 +9,7 @@ import javafx.scene.paint.Color
 
 class MainContent(val mcLauncher: MCLauncher) : ViewBuilder() {
     val root: BorderPane = BorderPane()
-    val instances = InstancesView(mcLauncher.instanceManager)
+    private val instances = InstancesView(mcLauncher.instanceManager)
 
     override fun build(): Region = root.styleAs("root-pane").apply {
         setPrefSize(1280.0, 720.0)

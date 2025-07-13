@@ -20,7 +20,6 @@ import javafx.stage.StageStyle
 import kotlinx.coroutines.runBlocking
 import java.awt.Desktop
 import java.io.File
-import java.nio.file.FileSystem
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -52,10 +51,15 @@ class MCLauncher : Application() {
         instanceManager = InstanceManager(this.getDataDirectory())
 
         with(primaryStage) {
-            title = "Cum"
+            title = "MCLauncher $VERSION"
             isResizable = false
             icons += Image(MCLauncher::class.java.classLoader.getResourceAsStream("icon.png"))
             scene = Scene(MainContent(this@MCLauncher).build()).apply { fill = Color.TRANSPARENT }
+
+            scene.onKeyPressed = EventHandler {
+                if (it.code == KeyCode.F1)
+                    Desktop.getDesktop().open(File(getDataDirectory()))
+            }
 
             initStyle(StageStyle.TRANSPARENT)
 

@@ -6,14 +6,16 @@ import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import kotlinx.coroutines.*
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 
-class InstanceManager(private val instancesPath: String) {
+class InstanceManager(configDirectory: String) {
     val instances: ObservableList<GameInstance> = FXCollections.observableArrayList()
+    private val instancesPath: Path = Paths.get(configDirectory, "instances")
 
     init {
-        Files.createDirectories(Paths.get(instancesPath))
+        Files.createDirectories(instancesPath)
 
         for (i in 0..4) {
             createInstance()
@@ -27,11 +29,11 @@ class InstanceManager(private val instancesPath: String) {
 
     private suspend fun saveInstanceToDisk(gameInstance: GameInstance): GameInstance = withContext(Dispatchers.IO) {
         try {
-            val filePath = "$instancesPath/${gameInstance.uuid}/instance.json"
+            val filePath = instancesPath.resolve("${gameInstance.uuid}/instance.json")
 
             val jsonString = gson.toJson(gameInstance)
-            Files.createDirectories(Paths.get(filePath).parent)
-            Files.writeString(Paths.get(filePath), jsonString)
+            Files.createDirectories(filePath.parent)
+            Files.writeString(filePath, jsonString)
 
             gameInstance
         } catch (e: Exception) {

@@ -39,6 +39,8 @@ class NavigationBar(private val mainContent: MainContent) : VBox() {
     private fun createInstanceButton(): Button = Button().styleAs("nav-button", "create-instance-button").apply {
         graphic = MFXIconWrapper("fas-plus", 20.0, 20.0)
         text = "Create Instance"
-        onAction = EventHandler { mainContent.mcLauncher.instanceManager.createInstance() }
+        onAction = EventHandler {
+            mainContent.mcLauncher.instanceManager.createInstance()
+        }
     }
 }

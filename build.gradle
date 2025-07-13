@@ -42,7 +42,6 @@ dependencies {
     implementation('org.controlsfx:controlsfx:11.2.1')
     implementation('org.kordamp.bootstrapfx:bootstrapfx-core:0.4.0')
     implementation('io.github.palexdev:materialfx:11.17.0')
-
     implementation('fr.brouillard.oss:cssfx:11.4.0')
 
     implementation files('libs/scenicview.jar')

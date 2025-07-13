@@ -26,6 +26,14 @@ class Window(builder: WindowBuilder) {
         }
     }
 
+    fun show() {
+        stage.show()
+    }
+
+    fun showAndWait() {
+        stage.showAndWait()
+    }
+
     companion object {
         inline fun create(parent: Parent, block: WindowBuilder.() -> Unit): Window =
             WindowBuilder(parent).apply(block).build()
