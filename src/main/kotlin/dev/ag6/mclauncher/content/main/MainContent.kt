@@ -7,6 +7,8 @@ import dev.ag6.mclauncher.utils.styleAs
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 
+
+//Have a main view / controller setup which will handle all the of the content switching, it will manage all the windows etc.
 class MainContent(val mcLauncher: MCLauncher) : ViewBuilder() {
     val root: BorderPane = BorderPane()
     private val instances = InstancesView(mcLauncher.instanceManager)

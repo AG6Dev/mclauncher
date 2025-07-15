@@ -1,5 +1,6 @@
 package dev.ag6.mclauncher.utils
 
+import javafx.event.EventHandler
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.image.Image
@@ -16,9 +17,13 @@ class Window(builder: WindowBuilder) {
             stage.title = title
             stage.width = width
             stage.height = height
-            stage.isResizable = resizable
-            stage.isAlwaysOnTop = alwaysOnTop
-            stage.icons += icon
+            stage.isResizable = isResizable
+            stage.isAlwaysOnTop = isAlwaysOnTop
+            if (builder.icon != null)
+                stage.icons.add(icon)
+            stage.onCloseRequest = EventHandler {
+                onCloseRequest?.invoke()
+            }
             stage.initStyle(style)
 
             scene = Scene(parent, width, height)
@@ -34,6 +39,14 @@ class Window(builder: WindowBuilder) {
         stage.showAndWait()
     }
 
+    fun hide() {
+        stage.hide()
+    }
+
+    fun close() {
+        stage.close()
+    }
+
     companion object {
         inline fun create(parent: Parent, block: WindowBuilder.() -> Unit): Window =
             WindowBuilder(parent).apply(block).build()
@@ -43,10 +56,11 @@ class Window(builder: WindowBuilder) {
         var title: String = "Window"
         var width: Double = 800.0
         var height: Double = 600.0
-        var resizable: Boolean = true
-        var alwaysOnTop: Boolean = false
+        var isResizable: Boolean = true
+        var isAlwaysOnTop: Boolean = false
         var style: StageStyle = StageStyle.DECORATED
         var icon: Image? = null
+        var onCloseRequest: (() -> Unit)? = null
 
         override fun build(): Window = Window(this)
     }

@@ -1,6 +1,8 @@
 package dev.ag6.mclauncher.content.main
 
 import dev.ag6.mclauncher.content.ViewBuilder
+import dev.ag6.mclauncher.content.createinstance.CreateInstanceView
+import dev.ag6.mclauncher.utils.Window
 import dev.ag6.mclauncher.utils.styleAs
 import io.github.palexdev.materialfx.controls.MFXIconWrapper
 import javafx.event.EventHandler
@@ -41,6 +43,15 @@ class NavigationBar(private val mainContent: MainContent) : VBox() {
         text = "Create Instance"
         onAction = EventHandler {
             mainContent.mcLauncher.instanceManager.createInstance()
+
+            val window: Window = Window.create(CreateInstanceView().build()) {
+                title = "Create Instance"
+                width = 600.0
+                height = 400.0
+                isResizable = false
+            }
+
+            window.showAndWait()
         }
     }
 }

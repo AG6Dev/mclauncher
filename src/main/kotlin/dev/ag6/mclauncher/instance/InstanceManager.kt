@@ -17,9 +17,9 @@ class InstanceManager(configDirectory: String) {
     init {
         Files.createDirectories(instancesPath)
 
-        for (i in 0..4) {
-            createInstance()
-        }
+//        for (i in 0..4) {
+//            createInstance()
+//        }
     }
 
     fun createInstance() {
@@ -27,7 +27,24 @@ class InstanceManager(configDirectory: String) {
         instances.add(newInstance)
     }
 
-    private suspend fun saveInstanceToDisk(gameInstance: GameInstance): GameInstance = withContext(Dispatchers.IO) {
+    fun loadInstances() {
+        try {
+            val files = Files.list(instancesPath).forEach {
+                if (Files.isDirectory(it)) {
+                    val instanceFile = it.resolve("instance.json")
+                    if (Files.exists(instanceFile)) {
+                        val jsonString = Files.readString(instanceFile)
+                        val gameInstance = gson.fromJson(jsonString, GameInstance::class.java)
+                        instances.add(gameInstance)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            error("Failed to load instances from disk: ${e.message}")
+        }
+    }
+
+    suspend fun saveInstanceToDisk(gameInstance: GameInstance): GameInstance = withContext(Dispatchers.IO) {
         try {
             val filePath = instancesPath.resolve("${gameInstance.uuid}/instance.json")
 

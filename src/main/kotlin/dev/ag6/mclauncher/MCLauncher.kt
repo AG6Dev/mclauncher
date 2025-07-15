@@ -53,6 +53,7 @@ class MCLauncher : Application() {
 
         this.primaryStage = primaryStage
         this.instanceManager = InstanceManager(this.getDataDirectory())
+        this.instanceManager.loadInstances()
 
         this.versionHandler = GameVersionHandler()
         this.versionHandler.fetchGameVersions()
