@@ -10,13 +10,16 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
-//consider changing this to an object class
-class GameVersionHandler {
-    private val allVersions: ObservableList<GameVersion> = FXCollections.observableArrayList()
+object GameVersionHandler {
+    private const val VERSION_MANIFEST_URL = "https://launchermeta.mojang.com/mc/game/version_manifest.json"
+    private val httpClient = HttpClient.newHttpClient()
+    private val gson = Gson()
+
+    val allVersions: ObservableList<GameVersion> = FXCollections.observableArrayList()
 
     fun fetchGameVersions() {
         val request = HttpRequest.newBuilder()
-            .uri(URI.create(versionManifestUrl))
+            .uri(URI.create(VERSION_MANIFEST_URL))
             .GET()
             .build()
 
@@ -29,10 +32,6 @@ class GameVersionHandler {
                 val versions: List<GameVersion> = gson.fromJson(manifest.get("versions"), ManifestTypeToken)
                 allVersions.addAll(versions)
 
-                for (i in 0..5) {
-                    println("Version ${i}: ${versions[i].id} - ${versions[i].type} - ${versions[i].url}")
-                }
-
                 println("Fetched ${versions.size} game versions.")
             } else {
                 throw Exception("Failed to fetch version manifest. Status code: ${response.statusCode()}")
@@ -40,13 +39,6 @@ class GameVersionHandler {
         } catch (exception: Exception) {
             error("Error fetching game versions: ${exception.message}")
         }
-    }
-
-
-    companion object {
-        private const val versionManifestUrl: String = "https://launchermeta.mojang.com/mc/game/version_manifest.json"
-        private val httpClient: HttpClient = HttpClient.newHttpClient()
-        private val gson: Gson = Gson()
     }
 
     private object ManifestTypeToken : TypeToken<List<GameVersion>>()

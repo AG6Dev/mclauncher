@@ -29,15 +29,15 @@ class WindowHeader(private val launcher: MCLauncher) : HBox() {
 
         onMousePressed = EventHandler { event ->
             if (canDrag) {
-                xOffset = launcher.primaryStage.x - event.screenX
-                yOffset = launcher.primaryStage.y - event.screenY
+                xOffset = launcher.window.stage.x - event.screenX
+                yOffset = launcher.window.stage.y - event.screenY
             }
         }
 
         onMouseDragged = EventHandler { event ->
             if (canDrag) {
-                launcher.primaryStage.x = event.screenX + xOffset
-                launcher.primaryStage.y = event.screenY + yOffset
+                launcher.window.stage.x = event.screenX + xOffset
+                launcher.window.stage.y = event.screenY + yOffset
             }
         }
 
@@ -52,7 +52,7 @@ class WindowHeader(private val launcher: MCLauncher) : HBox() {
             onMousePressed = EventHandler { canDrag = false }
             onMouseReleased = EventHandler { _ ->
                 canDrag = true
-                launcher.setIconified(true)
+                launcher.window.stage.isIconified = true
             }
         }
 

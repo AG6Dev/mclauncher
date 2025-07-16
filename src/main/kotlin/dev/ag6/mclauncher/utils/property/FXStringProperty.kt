@@ -22,3 +22,11 @@ class FXStringProperty() {
         return property
     }
 }
+
+fun stringProperty(): FXStringProperty {
+    return FXStringProperty()
+}
+
+fun stringProperty(value: String): FXStringProperty {
+    return FXStringProperty(value)
+}

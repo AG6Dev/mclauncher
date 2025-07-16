@@ -8,11 +8,13 @@ import javafx.stage.Stage
 import javafx.stage.StageStyle
 import javafx.util.Builder
 
-class Window(builder: WindowBuilder) {
-    val stage: Stage = Stage()
-    private val scene: Scene
+class Window {
+    val stage: Stage
+    val scene: Scene
 
-    init {
+    private constructor(builder: WindowBuilder) {
+        this.stage = Stage()
+
         with(builder) {
             stage.title = title
             stage.width = width
@@ -29,6 +31,11 @@ class Window(builder: WindowBuilder) {
             scene = Scene(parent, width, height)
             stage.scene = scene
         }
+    }
+
+    constructor(stage: Stage) {
+        this.stage = stage
+        this.scene = stage.scene
     }
 
     fun show() {

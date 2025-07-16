@@ -3,6 +3,7 @@ package dev.ag6.mclauncher
 import dev.ag6.mclauncher.content.main.MainContent
 import dev.ag6.mclauncher.instance.InstanceManager
 import dev.ag6.mclauncher.minecraft.GameVersionHandler
+import dev.ag6.mclauncher.utils.Window
 import dev.ag6.mclauncher.utils.getAllDescendants
 import fr.brouillard.oss.cssfx.CSSFX
 import javafx.application.Application
@@ -18,26 +19,23 @@ import javafx.scene.layout.Region
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 import javafx.stage.StageStyle
-import kotlinx.coroutines.runBlocking
 import java.awt.Desktop
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 
+//TODO: First time setup screen
 class MCLauncher : Application() {
     lateinit var instanceManager: InstanceManager
         private set
 
-    lateinit var primaryStage: Stage
-        private set
-
-    lateinit var versionHandler: GameVersionHandler
+    lateinit var window: Window
         private set
 
     var alwaysOnTop: Boolean = false
-        get() = primaryStage.isAlwaysOnTop
+        get() = window.stage.isAlwaysOnTop
         set(it) {
-            primaryStage.isAlwaysOnTop = it
+            window.stage.isAlwaysOnTop = it
             field = it
         }
 
@@ -46,17 +44,17 @@ class MCLauncher : Application() {
     override fun start(primaryStage: Stage) {
         CSSFX.start()
 
-        //TODO: Create necessary directories and config files etc.
-        //TODO: First time setup screen
-        this.firstStart =
-            Files.exists(Paths.get(this.getDataDirectory())) == false
+        val appDataDirectory = Paths.get(this.getAppDataDirectory())
+        this.firstStart = Files.exists(appDataDirectory) == false
+        if (this.firstStart) {
+            println("First start detected. Creating app data directory...")
+            Files.createDirectories(appDataDirectory)
+        }
 
-        this.primaryStage = primaryStage
-        this.instanceManager = InstanceManager(this.getDataDirectory())
+        this.instanceManager = InstanceManager(appDataDirectory)
         this.instanceManager.loadInstances()
 
-        this.versionHandler = GameVersionHandler()
-        this.versionHandler.fetchGameVersions()
+        GameVersionHandler.fetchGameVersions()
 
         with(primaryStage) {
             title = "MCLauncher $VERSION"
@@ -66,7 +64,7 @@ class MCLauncher : Application() {
 
             scene.onKeyPressed = EventHandler {
                 if (it.code == KeyCode.F1)
-                    Desktop.getDesktop().open(File(getDataDirectory()))
+                    Desktop.getDesktop().open(File(appDataDirectory.toString()))
             }
 
             initStyle(StageStyle.TRANSPARENT)
@@ -74,31 +72,26 @@ class MCLauncher : Application() {
             show()
         }
 
-//        applyBorderToAll()
+        this.window = Window(primaryStage)
     }
 
     override fun stop() {
         println("Stopping MCLauncher...")
 
-        runBlocking {
-            instanceManager.saveAllInstances()
-        }
+        instanceManager.saveAllInstances()
     }
 
-    fun setIconified(value: Boolean) {
-        primaryStage.isIconified = value
-    }
 
     private fun applyBorderToAll() {
         fun randomColor(): Color {
             return Color.color(Math.random(), Math.random(), Math.random())
         }
 
-        primaryStage.scene.root.getAllDescendants().filterIsInstance<Region>()
+        window.scene.root.getAllDescendants().filterIsInstance<Region>()
             .forEach { it.border = Border(BorderStroke(randomColor(), BorderStrokeStyle.SOLID, null, null)) }
     }
 
-    private fun getDataDirectory(): String = System.getProperty("user.home") + "/.mclauncher"
+    private fun getAppDataDirectory(): String = System.getProperty("user.home") + "/.mclauncher"
 
     companion object {
         const val VERSION: String = "1.0.0"

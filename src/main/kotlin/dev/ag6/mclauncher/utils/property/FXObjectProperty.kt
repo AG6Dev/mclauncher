@@ -22,3 +22,11 @@ class FXObjectProperty<T>() {
         return backingField
     }
 }
+
+fun <T> objectProperty(): FXObjectProperty<T> {
+    return FXObjectProperty()
+}
+
+fun <T> objectProperty(value: T): FXObjectProperty<T> {
+    return FXObjectProperty(value)
+}

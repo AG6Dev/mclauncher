@@ -3,16 +3,16 @@ package dev.ag6.mclauncher.instance
 import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-import dev.ag6.mclauncher.utils.property.FXObjectProperty
-import dev.ag6.mclauncher.utils.property.FXStringProperty
+import dev.ag6.mclauncher.utils.property.objectProperty
+import dev.ag6.mclauncher.utils.property.stringProperty
 import java.util.*
 
 class GameInstance(uuid: UUID, name: String, description: String) {
-    val name: String by FXStringProperty(name)
+    val name: String by stringProperty(name)
 
-    val description: String by FXStringProperty(description)
+    val description: String by stringProperty(description)
 
-    val uuid: UUID by FXObjectProperty(uuid)
+    val uuid: UUID by objectProperty(uuid)
 }
 
 object GameInstanceAdapter : TypeAdapter<GameInstance>() {

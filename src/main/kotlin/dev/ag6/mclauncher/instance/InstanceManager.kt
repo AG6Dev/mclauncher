@@ -4,22 +4,16 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import kotlinx.coroutines.*
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.util.*
 
-class InstanceManager(configDirectory: String) {
+class InstanceManager(dataDirectory: Path) {
     val instances: ObservableList<GameInstance> = FXCollections.observableArrayList()
-    private val instancesPath: Path = Paths.get(configDirectory, "instances")
+    private val instancesPath: Path = dataDirectory.resolve("instances")
 
     init {
         Files.createDirectories(instancesPath)
-
-//        for (i in 0..4) {
-//            createInstance()
-//        }
     }
 
     fun createInstance() {
@@ -29,45 +23,45 @@ class InstanceManager(configDirectory: String) {
 
     fun loadInstances() {
         try {
-            val files = Files.list(instancesPath).forEach {
-                if (Files.isDirectory(it)) {
-                    val instanceFile = it.resolve("instance.json")
-                    if (Files.exists(instanceFile)) {
-                        val jsonString = Files.readString(instanceFile)
-                        val gameInstance = gson.fromJson(jsonString, GameInstance::class.java)
-                        instances.add(gameInstance)
-                    }
+            val files = Files.list(instancesPath)
+                .filter { Files.isDirectory(it) }
+                .toList()
+
+            instances.clear()
+            for (file in files) {
+                val instanceFile = file.resolve("instance.json")
+                if (Files.exists(instanceFile)) {
+                    val jsonString = Files.readString(instanceFile)
+                    val gameInstance: GameInstance = gson.fromJson(jsonString, GameInstance::class.java)
+                    instances.add(gameInstance)
+                } else {
+                    println("Warning: Instance file not found for ${file.fileName}")
                 }
             }
+            println("Loaded ${instances.size} instances")
         } catch (e: Exception) {
             error("Failed to load instances from disk: ${e.message}")
         }
     }
 
-    suspend fun saveInstanceToDisk(gameInstance: GameInstance): GameInstance = withContext(Dispatchers.IO) {
+    private fun saveInstanceToDisk(gameInstance: GameInstance) {
         try {
             val filePath = instancesPath.resolve("${gameInstance.uuid}/instance.json")
 
             val jsonString = gson.toJson(gameInstance)
             Files.createDirectories(filePath.parent)
             Files.writeString(filePath, jsonString)
-
-            gameInstance
         } catch (e: Exception) {
             error("Failed to save instance ${gameInstance.uuid} to disk: ${e.message}")
         }
     }
 
-    suspend fun saveAllInstances(): List<GameInstance> = coroutineScope {
+    fun saveAllInstances() {
         println("Saving all instances to disk...")
-        val deferredSaves = instances.map {
-            async {
-                saveInstanceToDisk(it)
-            }
-        }
-        val savedInstances = deferredSaves.awaitAll()
-        println("Saved ${savedInstances.size} instances to disk.")
-        savedInstances
+
+        instances.forEach { saveInstanceToDisk(it) }
+
+        println("Saved ${instances.size} instances to disk.")
     }
 
     companion object {

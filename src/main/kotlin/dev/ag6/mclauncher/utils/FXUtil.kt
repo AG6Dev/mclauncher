@@ -3,7 +3,7 @@ package dev.ag6.mclauncher.utils
 import javafx.scene.Node
 import javafx.scene.Parent
 
-fun <T : Node> T.styleAs(vararg style: String): T = apply { styleClass += style }
+infix fun <T : Node> T.styleAs(style: String): T = apply { styleClass += style }
 
 fun Parent.getAllDescendants(): List<Node> {
     val descendents = mutableListOf<Node>()
