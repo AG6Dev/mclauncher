@@ -1,7 +1,7 @@
 package dev.ag6.mclauncher.content.main
 
 import dev.ag6.mclauncher.content.ViewBuilder
-import dev.ag6.mclauncher.content.createinstance.CreateInstanceView
+import dev.ag6.mclauncher.content.createinstance.CreateInstanceManager
 import dev.ag6.mclauncher.utils.Window
 import dev.ag6.mclauncher.utils.styleAs
 import io.github.palexdev.materialfx.controls.MFXIconWrapper
@@ -12,7 +12,7 @@ import javafx.scene.control.ToggleButton
 import javafx.scene.control.ToggleGroup
 import javafx.scene.layout.VBox
 
-class NavigationBar(private val mainContent: MainContent) : VBox() {
+class NavigationBar(private val mainContent: MainController) : VBox() {
     private val selectedPageToggleGroup = ToggleGroup()
 
     init {
@@ -33,18 +33,16 @@ class NavigationBar(private val mainContent: MainContent) : VBox() {
             toggleGroup = selectedPageToggleGroup
 
             onAction = EventHandler {
-                println("Changing content to $msg")
-                mainContent.root.center = viewBuilder?.build()
+                mainContent.changeContent(viewBuilder?.build())
             }
-        }
+        } styleAs "nav-button"
 
-    private fun createInstanceButton(): Button = Button().styleAs("nav-button", "create-instance-button").apply {
+
+    private fun createInstanceButton(): Button = Button().apply {
         graphic = MFXIconWrapper("fas-plus", 20.0, 20.0)
         text = "Create Instance"
         onAction = EventHandler {
-            mainContent.mcLauncher.instanceManager.createInstance()
-
-            val window: Window = Window.create(CreateInstanceView().build()) {
+            val window: Window = Window.create(CreateInstanceManager().build()) {
                 title = "Create Instance"
                 width = 600.0
                 height = 400.0
@@ -53,5 +51,5 @@ class NavigationBar(private val mainContent: MainContent) : VBox() {
 
             window.showAndWait()
         }
-    }
+    } styleAs "nav-button" styleAs "create-instance-button"
 }

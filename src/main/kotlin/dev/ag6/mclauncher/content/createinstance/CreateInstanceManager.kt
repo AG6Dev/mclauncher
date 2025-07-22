@@ -5,7 +5,7 @@ import dev.ag6.mclauncher.utils.styleAs
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Region
 
-class CreateInstanceView : ViewBuilder() {
+class CreateInstanceManager : ViewBuilder() {
     override fun build(): Region = AnchorPane().styleAs("create-instance-root").apply {
 
     }

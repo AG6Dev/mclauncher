@@ -1,6 +1,6 @@
 package dev.ag6.mclauncher
 
-import dev.ag6.mclauncher.content.main.MainContent
+import dev.ag6.mclauncher.content.main.MainController
 import dev.ag6.mclauncher.instance.InstanceManager
 import dev.ag6.mclauncher.minecraft.GameVersionHandler
 import dev.ag6.mclauncher.utils.Window
@@ -60,7 +60,7 @@ class MCLauncher : Application() {
             title = "MCLauncher $VERSION"
             isResizable = false
             icons += Image(MCLauncher::class.java.classLoader.getResourceAsStream("icon.png"))
-            scene = Scene(MainContent(this@MCLauncher).build()).apply { fill = Color.TRANSPARENT }
+            scene = Scene(MainController(this@MCLauncher).build()).apply { fill = Color.TRANSPARENT }
 
             scene.onKeyPressed = EventHandler {
                 if (it.code == KeyCode.F1)

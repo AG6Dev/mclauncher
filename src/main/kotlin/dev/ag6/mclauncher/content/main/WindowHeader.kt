@@ -1,6 +1,7 @@
 package dev.ag6.mclauncher.content.main
 
 import dev.ag6.mclauncher.MCLauncher
+import dev.ag6.mclauncher.utils.Window
 import dev.ag6.mclauncher.utils.styleAs
 import io.github.palexdev.materialfx.controls.MFXIconWrapper
 import javafx.application.Platform
@@ -12,7 +13,7 @@ import javafx.scene.layout.Priority
 import javafx.scene.layout.Region
 import javafx.scene.paint.Color
 
-class WindowHeader(private val launcher: MCLauncher) : HBox() {
+class WindowHeader(private val window: () -> Window) : HBox() {
     private var xOffset = 0.0
     private var yOffset = 0.0
 
@@ -29,15 +30,15 @@ class WindowHeader(private val launcher: MCLauncher) : HBox() {
 
         onMousePressed = EventHandler { event ->
             if (canDrag) {
-                xOffset = launcher.window.stage.x - event.screenX
-                yOffset = launcher.window.stage.y - event.screenY
+                xOffset = window.invoke().stage.x - event.screenX
+                yOffset = window.invoke().stage.y - event.screenY
             }
         }
 
         onMouseDragged = EventHandler { event ->
             if (canDrag) {
-                launcher.window.stage.x = event.screenX + xOffset
-                launcher.window.stage.y = event.screenY + yOffset
+                window.invoke().stage.x = event.screenX + xOffset
+                window.invoke().stage.y = event.screenY + yOffset
             }
         }
 
@@ -52,7 +53,7 @@ class WindowHeader(private val launcher: MCLauncher) : HBox() {
             onMousePressed = EventHandler { canDrag = false }
             onMouseReleased = EventHandler { _ ->
                 canDrag = true
-                launcher.window.stage.isIconified = true
+                window.invoke().stage.isIconified = true
             }
         }
 
@@ -60,9 +61,9 @@ class WindowHeader(private val launcher: MCLauncher) : HBox() {
             onMousePressed = EventHandler { canDrag = false }
             onMouseReleased = EventHandler {
                 canDrag = true
-                val currentValue = launcher.alwaysOnTop
+                val currentValue = window.invoke().stage.isAlwaysOnTop
                 this.pseudoClassStateChanged(PseudoClass.getPseudoClass("always-on-top"), !currentValue)
-                launcher.alwaysOnTop = !currentValue
+                window.invoke().stage.isAlwaysOnTop = !currentValue
             }
         }
 
