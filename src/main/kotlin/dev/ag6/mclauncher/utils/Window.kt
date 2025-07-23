@@ -8,6 +8,7 @@ import javafx.stage.Stage
 import javafx.stage.StageStyle
 import javafx.util.Builder
 
+//redo this properly with full support
 class Window {
     val stage: Stage
     val scene: Scene
@@ -36,6 +37,10 @@ class Window {
     constructor(stage: Stage) {
         this.stage = stage
         this.scene = stage.scene
+    }
+
+    fun setOwner(owner: Stage) {
+        stage.initOwner(owner)
     }
 
     fun show() {

@@ -1,8 +1,7 @@
 package dev.ag6.mclauncher.content.main
 
 import dev.ag6.mclauncher.content.ViewBuilder
-import dev.ag6.mclauncher.content.createinstance.CreateInstanceManager
-import dev.ag6.mclauncher.utils.Window
+import dev.ag6.mclauncher.content.createinstance.CreateInstanceWindow
 import dev.ag6.mclauncher.utils.styleAs
 import io.github.palexdev.materialfx.controls.MFXIconWrapper
 import javafx.event.EventHandler
@@ -12,7 +11,7 @@ import javafx.scene.control.ToggleButton
 import javafx.scene.control.ToggleGroup
 import javafx.scene.layout.VBox
 
-class NavigationBar(private val mainContent: MainController) : VBox() {
+class NavigationBar(private val mainController: MainController) : VBox() {
     private val selectedPageToggleGroup = ToggleGroup()
 
     init {
@@ -33,7 +32,7 @@ class NavigationBar(private val mainContent: MainController) : VBox() {
             toggleGroup = selectedPageToggleGroup
 
             onAction = EventHandler {
-                mainContent.changeContent(viewBuilder?.build())
+                mainController.changeContent(viewBuilder?.build())
             }
         } styleAs "nav-button"
 
@@ -42,14 +41,7 @@ class NavigationBar(private val mainContent: MainController) : VBox() {
         graphic = MFXIconWrapper("fas-plus", 20.0, 20.0)
         text = "Create Instance"
         onAction = EventHandler {
-            val window: Window = Window.create(CreateInstanceManager().build()) {
-                title = "Create Instance"
-                width = 600.0
-                height = 400.0
-                isResizable = false
-            }
-
-            window.showAndWait()
+            CreateInstanceWindow(mainController.instanceManager)
         }
     } styleAs "nav-button" styleAs "create-instance-button"
 }

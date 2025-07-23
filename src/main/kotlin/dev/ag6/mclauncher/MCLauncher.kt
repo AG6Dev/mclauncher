@@ -29,15 +29,8 @@ class MCLauncher : Application() {
     lateinit var instanceManager: InstanceManager
         private set
 
-    lateinit var window: Window
+    lateinit var mainWindow: Window
         private set
-
-    var alwaysOnTop: Boolean = false
-        get() = window.stage.isAlwaysOnTop
-        set(it) {
-            window.stage.isAlwaysOnTop = it
-            field = it
-        }
 
     private var firstStart: Boolean = false
 
@@ -51,10 +44,11 @@ class MCLauncher : Application() {
             Files.createDirectories(appDataDirectory)
         }
 
+        GameVersionHandler.fetchGameVersions()
+
         this.instanceManager = InstanceManager(appDataDirectory)
         this.instanceManager.loadInstances()
 
-        GameVersionHandler.fetchGameVersions()
 
         with(primaryStage) {
             title = "MCLauncher $VERSION"
@@ -72,7 +66,7 @@ class MCLauncher : Application() {
             show()
         }
 
-        this.window = Window(primaryStage)
+        this.mainWindow = Window(primaryStage)
     }
 
     override fun stop() {
@@ -87,14 +81,14 @@ class MCLauncher : Application() {
             return Color.color(Math.random(), Math.random(), Math.random())
         }
 
-        window.scene.root.getAllDescendants().filterIsInstance<Region>()
+        mainWindow.scene.root.getAllDescendants().filterIsInstance<Region>()
             .forEach { it.border = Border(BorderStroke(randomColor(), BorderStrokeStyle.SOLID, null, null)) }
     }
 
     private fun getAppDataDirectory(): String = System.getProperty("user.home") + "/.mclauncher"
 
     companion object {
-        const val VERSION: String = "1.0.0"
+        const val VERSION: String = "0.0.1"
     }
 }
 

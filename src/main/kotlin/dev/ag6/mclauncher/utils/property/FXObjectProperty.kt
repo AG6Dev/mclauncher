@@ -4,7 +4,7 @@ import javafx.beans.property.SimpleObjectProperty
 import kotlin.reflect.KProperty
 
 class FXObjectProperty<T>() {
-    constructor(value: T) : this() {
+    constructor(value: T?) : this() {
         backingField.set(value)
     }
 
@@ -27,6 +27,6 @@ fun <T> objectProperty(): FXObjectProperty<T> {
     return FXObjectProperty()
 }
 
-fun <T> objectProperty(value: T): FXObjectProperty<T> {
+fun <T> objectProperty(value: T?): FXObjectProperty<T> {
     return FXObjectProperty(value)
 }
