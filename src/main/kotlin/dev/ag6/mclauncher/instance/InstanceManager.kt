@@ -3,6 +3,7 @@ package dev.ag6.mclauncher.instance
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dev.ag6.mclauncher.minecraft.GameVersion
+import dev.ag6.mclauncher.minecraft.GameVersionHandler
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import java.nio.file.Files
@@ -19,13 +20,15 @@ class InstanceManager(dataDirectory: Path) {
 
     fun createInstance(name: String, description: String, version: GameVersion) {
         val newInstance = GameInstance(UUID.randomUUID(), name, description, version)
+        GameVersionHandler.fetchVersionMeta(version)
         instances.add(newInstance)
     }
 
+    //TODO: coroutines
     fun loadInstances() {
         try {
             val files = Files.list(instancesPath)
-                .filter { Files.isDirectory(it) }
+                .filter(Files::isDirectory)
                 .toList()
 
             instances.clear()

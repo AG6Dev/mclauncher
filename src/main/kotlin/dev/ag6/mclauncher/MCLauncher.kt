@@ -20,8 +20,8 @@ import javafx.scene.paint.Color
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import java.awt.Desktop
-import java.io.File
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 
 //TODO: First time setup screen
@@ -34,21 +34,22 @@ class MCLauncher : Application() {
 
     private var firstStart: Boolean = false
 
-    override fun start(primaryStage: Stage) {
-        CSSFX.start()
-
-        val appDataDirectory = Paths.get(this.getAppDataDirectory())
-        this.firstStart = Files.exists(appDataDirectory) == false
+    override fun init() {
+        this.firstStart = Files.exists(DATA_DIRECTORY) == false
         if (this.firstStart) {
-            println("First start detected. Creating app data directory...")
-            Files.createDirectories(appDataDirectory)
+            println("First start detected. Creating launcher data directory...")
+            Files.createDirectories(DATA_DIRECTORY)
         }
 
         GameVersionHandler.fetchGameVersions()
+        GameVersionHandler.loadAllMetadataFromDisk()
 
-        this.instanceManager = InstanceManager(appDataDirectory)
+        this.instanceManager = InstanceManager(DATA_DIRECTORY)
         this.instanceManager.loadInstances()
+    }
 
+    override fun start(primaryStage: Stage) {
+        CSSFX.start()
 
         with(primaryStage) {
             title = "MCLauncher $VERSION"
@@ -58,7 +59,7 @@ class MCLauncher : Application() {
 
             scene.onKeyPressed = EventHandler {
                 if (it.code == KeyCode.F1)
-                    Desktop.getDesktop().open(File(appDataDirectory.toString()))
+                    Desktop.getDesktop().open(DATA_DIRECTORY.toFile())
             }
 
             initStyle(StageStyle.TRANSPARENT)
@@ -85,10 +86,10 @@ class MCLauncher : Application() {
             .forEach { it.border = Border(BorderStroke(randomColor(), BorderStrokeStyle.SOLID, null, null)) }
     }
 
-    private fun getAppDataDirectory(): String = System.getProperty("user.home") + "/.mclauncher"
-
     companion object {
         const val VERSION: String = "0.0.1"
+
+        val DATA_DIRECTORY: Path = Paths.get(System.getProperty("user.home") + "/.mclauncher")
     }
 }
 
