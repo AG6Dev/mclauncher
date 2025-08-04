@@ -6,6 +6,7 @@ import dev.ag6.mclauncher.minecraft.GameVersion
 import dev.ag6.mclauncher.minecraft.GameVersionHandler
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
+import kotlinx.coroutines.*
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
@@ -13,6 +14,7 @@ import java.util.*
 class InstanceManager(dataDirectory: Path) {
     val instances: ObservableList<GameInstance> = FXCollections.observableArrayList()
     private val instancesPath: Path = dataDirectory.resolve("instances")
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     init {
         Files.createDirectories(instancesPath)
@@ -20,7 +22,7 @@ class InstanceManager(dataDirectory: Path) {
 
     fun createInstance(name: String, description: String, version: GameVersion) {
         val newInstance = GameInstance(UUID.randomUUID(), name, description, version)
-        GameVersionHandler.fetchVersionMeta(version)
+        scope.launch { GameVersionHandler.fetchVersionMeta(version) }
         instances.add(newInstance)
     }
 
@@ -48,7 +50,7 @@ class InstanceManager(dataDirectory: Path) {
         }
     }
 
-    private fun saveInstanceToDisk(gameInstance: GameInstance) {
+    private suspend fun saveInstanceToDisk(gameInstance: GameInstance) = withContext(Dispatchers.IO) {
         try {
             val filePath = instancesPath.resolve("${gameInstance.uuid}/instance.json")
 
@@ -60,17 +62,19 @@ class InstanceManager(dataDirectory: Path) {
         }
     }
 
-    fun saveAllInstances() {
+    suspend fun saveAllInstances() {
         println("Saving all instances to disk...")
 
-        instances.forEach { saveInstanceToDisk(it) }
+        withContext(Dispatchers.IO) {
+            instances.map { async { saveInstanceToDisk(it) } }
+        }.awaitAll()
 
         println("Saved ${instances.size} instances to disk.")
     }
 
     companion object {
         private val gson: Gson = GsonBuilder().setPrettyPrinting()
-            .registerTypeAdapter(GameInstance::class.java, GameInstanceAdapter)
+            .registerTypeAdapter(GameInstance::class.java, GameInstanceTypeAdapter)
             .disableHtmlEscaping()
             .create()
     }

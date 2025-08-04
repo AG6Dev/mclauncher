@@ -3,7 +3,7 @@ package dev.ag6.mclauncher.minecraft
 import com.google.gson.JsonPrimitive
 
 
-typealias AssetIndex = MojangAssetIndex
+typealias AssetIndex = MojangAssetIndexInfo
 
 /**
  * Represents the version metadata which is saved to the disk.

@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName
  */
 data class MojangVersionMetadata(
     val arguments: MojangArguments,
-    val assetIndex: MojangAssetIndex,
+    val assetIndex: MojangAssetIndexInfo,
     val assets: String,
     val complianceLevel: Int,
     val downloads: MojangDownloads,
@@ -28,7 +28,7 @@ data class MojangArguments(
     val jvm: List<JsonElement>
 )
 
-data class MojangAssetIndex(val id: String, val sha1: String, val size: Int, val totalSize: Int, val url: String)
+data class MojangAssetIndexInfo(val id: String, val sha1: String, val size: Long, val totalSize: Long, val url: String)
 
 data class MojangDownloads(
     val client: MojangDownload? = null,
@@ -39,7 +39,7 @@ data class MojangDownloads(
 
 data class MojangDownload(
     val sha1: String,
-    val size: Int,
+    val size: Long,
     val url: String
 )
 
@@ -51,7 +51,7 @@ data class MojangLibrary(
     val rules: List<MojangLibraryRule>? = null
 ) {
     data class MojangLibraryDownloads(val artifact: MojangLibraryArtifact) {
-        data class MojangLibraryArtifact(val path: String, val sha1: String, val size: Int, val url: String)
+        data class MojangLibraryArtifact(val path: String, val sha1: String, val size: Long, val url: String)
     }
 
     data class MojangLibraryRule(
@@ -64,6 +64,6 @@ data class MojangLibrary(
 
 data class MojangLogging(val client: MojangLoggingClient) {
     data class MojangLoggingClient(val argument: String, val file: MojangLoggingFile, val type: String) {
-        data class MojangLoggingFile(val id: String, val sha1: String, val size: Int, val url: String)
+        data class MojangLoggingFile(val id: String, val sha1: String, val size: Long, val url: String)
     }
 }

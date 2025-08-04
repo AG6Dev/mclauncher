@@ -19,7 +19,7 @@ class GameInstance(uuid: UUID, name: String, description: String, version: GameV
     val version: GameVersion by objectProperty(version)
 }
 
-object GameInstanceAdapter : TypeAdapter<GameInstance>() {
+object GameInstanceTypeAdapter : TypeAdapter<GameInstance>() {
     override fun write(out: JsonWriter?, value: GameInstance?) {
         if (out == null || value == null) return
 

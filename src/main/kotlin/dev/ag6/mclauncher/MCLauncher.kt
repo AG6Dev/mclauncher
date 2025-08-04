@@ -19,11 +19,13 @@ import javafx.scene.layout.Region
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 import javafx.stage.StageStyle
+import kotlinx.coroutines.runBlocking
 import java.awt.Desktop
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
+//TODO: Implement a task system
 //TODO: First time setup screen
 class MCLauncher : Application() {
     lateinit var instanceManager: InstanceManager
@@ -34,9 +36,9 @@ class MCLauncher : Application() {
 
     private var firstStart: Boolean = false
 
-    override fun init() {
-        this.firstStart = Files.exists(DATA_DIRECTORY) == false
-        if (this.firstStart) {
+    override fun init() = runBlocking {
+        this@MCLauncher.firstStart = Files.exists(DATA_DIRECTORY) == false
+        if (this@MCLauncher.firstStart) {
             println("First start detected. Creating launcher data directory...")
             Files.createDirectories(DATA_DIRECTORY)
         }
@@ -44,8 +46,8 @@ class MCLauncher : Application() {
         GameVersionHandler.fetchGameVersions()
         GameVersionHandler.loadAllMetadataFromDisk()
 
-        this.instanceManager = InstanceManager(DATA_DIRECTORY)
-        this.instanceManager.loadInstances()
+        this@MCLauncher.instanceManager = InstanceManager(DATA_DIRECTORY)
+        this@MCLauncher.instanceManager.loadInstances()
     }
 
     override fun start(primaryStage: Stage) {
@@ -70,7 +72,7 @@ class MCLauncher : Application() {
         this.mainWindow = Window(primaryStage)
     }
 
-    override fun stop() {
+    override fun stop() = runBlocking {
         println("Stopping MCLauncher...")
 
         instanceManager.saveAllInstances()

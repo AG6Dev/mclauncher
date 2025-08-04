@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken
 import dev.ag6.mclauncher.MCLauncher
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
+import kotlinx.coroutines.*
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -18,6 +19,8 @@ object GameVersionHandler {
     private val VERSION_META_PATH = MCLauncher.DATA_DIRECTORY.resolve("meta")
     private val httpClient = HttpClient.newHttpClient()
     private val gson = GsonBuilder().setPrettyPrinting().create()
+
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     val allVersions: ObservableList<GameVersion> = FXCollections.observableArrayList()
     private val versionMetas: MutableMap<GameVersion, LauncherVersionMetadata> = mutableMapOf()
@@ -43,7 +46,7 @@ object GameVersionHandler {
     }
 
     //TODO: coroutine this
-    fun loadAllMetadataFromDisk() {
+    suspend fun loadAllMetadataFromDisk() = withContext(Dispatchers.IO) {
         try {
             Files.createDirectories(VERSION_META_PATH)
 
@@ -51,15 +54,20 @@ object GameVersionHandler {
             if (Files.exists(minecraftRoot)) {
                 val versionFolders: List<Path> = Files.list(minecraftRoot).filter(Files::isDirectory).toList()
 
-                for (folder in versionFolders) {
-                    val versionId = folder.fileName.toString()
-                    val versionFile = folder.resolve("$versionId.json")
+                versionFolders.map { folder ->
+                    async {
+                        val versionId = folder.fileName.toString()
+                        val versionFile = folder.resolve("$versionId.json")
 
-                    val gameVersion = allVersions.find { it.id == versionId } ?: continue
-                    if (Files.exists(versionFile)) {
-                        val versionMeta = Files.readString(versionFile)
-                        val launcherMetadata = gson.fromJson(versionMeta, LauncherVersionMetadata::class.java)
-                        versionMetas[gameVersion] = launcherMetadata
+                        val gameVersion = allVersions.find { it.id == versionId } ?: return@async
+                        if (Files.exists(versionFile)) {
+                            val versionMeta = Files.readString(versionFile)
+                            val launcherMetadata = gson.fromJson(versionMeta, LauncherVersionMetadata::class.java)
+
+                            synchronized(versionMetas) {
+                                versionMetas[gameVersion] = launcherMetadata
+                            }
+                        }
                     }
                 }
             }
@@ -68,25 +76,28 @@ object GameVersionHandler {
         }
     }
 
-    private fun addVersionMeta(version: GameVersion, metadata: LauncherVersionMetadata) {
-        try {
-            if (version == UNKNOWN) return
-            versionMetas[version] = metadata
+    private suspend fun addVersionMeta(version: GameVersion, metadata: LauncherVersionMetadata) =
+        withContext(Dispatchers.IO) {
+            try {
+                if (version == UNKNOWN) return@withContext
+                synchronized(versionMetas) {
+                    versionMetas[version] = metadata
+                }
 
-            val versionMetaFile =
-                VERSION_META_PATH.resolve("net.minecraft").resolve(version.id).resolve("${version.id}.json")
+                val versionMetaFile =
+                    VERSION_META_PATH.resolve("net.minecraft").resolve(version.id).resolve("${version.id}.json")
 
-            Files.createDirectories(versionMetaFile.parent)
-            Files.writeString(versionMetaFile, gson.toJson(metadata))
-        } catch (e: Exception) {
-            TODO("Not yet implemented")
+                Files.createDirectories(versionMetaFile.parent)
+                Files.writeString(versionMetaFile, gson.toJson(metadata))
+            } catch (e: Exception) {
+                error("Error saving version metadata for ${version.id}: ${e.message}")
+            }
         }
-    }
 
     /**
      * Fetches and caches the metadata for a specific game version.
      */
-    fun fetchVersionMeta(version: GameVersion): LauncherVersionMetadata? {
+    suspend fun fetchVersionMeta(version: GameVersion): LauncherVersionMetadata? {
         try {
             if (version == UNKNOWN) return null
 
