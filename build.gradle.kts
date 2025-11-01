@@ -1,0 +1,84 @@
+plugins {
+    id("java")
+    id("application")
+    id("org.openjfx.javafxplugin") version "0.0.13"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("org.jetbrains.kotlin.jvm")
+}
+
+group = "dev.ag6"
+version = "1.0.0"
+
+repositories {
+    mavenCentral()
+
+    maven {
+        url = uri("https://jitpack.io")
+    }
+
+    maven {
+        url = uri("https://maven.ag6.dev/releases")
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.encoding = "UTF-8"
+}
+
+tasks.withType<Jar>().configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.jar {
+    manifest {
+        attributes(
+            "Main-Class" to "dev.ag6.mclauncher.MCLauncherKt"
+        )
+    }
+}
+
+tasks.shadowJar {
+    mergeServiceFiles()
+    archiveClassifier.set("")
+}
+
+application {
+    mainModule.set("dev.ag6.mclauncher")
+    mainClass.set("dev.ag6.mclauncher.MCLauncherKt")
+}
+
+javafx {
+    version = property("javafxVersion") as String
+    modules("javafx.controls", "javafx.fxml", "javafx.graphics", "javafx.web", "javafx.media", "javafx.swing")
+}
+
+dependencies {
+    implementation(files("libs/scenicview.jar"))
+
+    implementation("fr.brouillard.oss:cssfx:${property("cssfxVersion")}")
+
+    implementation("com.google.code.gson:gson:${property("gsonVersion")}")
+
+    implementation(platform("io.insert-koin:koin-bom:${property("koinBomVersion")}"))
+    implementation("io.insert-koin:koin-core")
+
+    implementation("io.github.oshai:kotlin-logging-jvm:${property("kotlinLoggingVersion")}")
+    implementation("org.slf4j:slf4j-simple:${property("slf4jVersion")}")
+    implementation("io.github.palexdev:materialfx:${property("materialfxVersion")}")
+    implementation("com.squareup.okhttp3:okhttp:${property("okhttpVersion")}")
+
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("coroutinesVersion")}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:${property("coroutinesVersion")}")
+
+    implementation("dev.ag6:konfig:${property("ag6KonfigVersion")}")
+}
+
+kotlin {
+    jvmToolchain(21)
+}
