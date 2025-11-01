@@ -1,7 +1,7 @@
 package dev.ag6.mclauncher.content.instances
 
 import dev.ag6.mclauncher.instance.GameInstance
-import dev.ag6.mclauncher.utils.styleAs
+import dev.ag6.mclauncher.util.styleAs
 import io.github.palexdev.materialfx.controls.MFXIconWrapper
 import javafx.animation.FadeTransition
 import javafx.event.EventHandler
@@ -18,7 +18,6 @@ class InstanceListCell : ListCell<GameInstance>() {
     private val container = StackPane()
 
     private val titleLabel = Label()
-    private val descriptionLabel = Label()
 
     private val buttonContainer = HBox()
     private val editButton = Button("", MFXIconWrapper("fas-pencil", 30.0, 30.0))
@@ -70,7 +69,7 @@ class InstanceListCell : ListCell<GameInstance>() {
 
         val infoContainer = VBox().apply {
             alignment = Pos.CENTER_LEFT
-            children.addAll(titleLabel, descriptionLabel)
+            children.addAll(titleLabel)
         }
 
         StackPane.setAlignment(infoContainer, Pos.CENTER_LEFT)
@@ -86,7 +85,6 @@ class InstanceListCell : ListCell<GameInstance>() {
             graphic = null
         } else {
             titleLabel.text = item.name
-            descriptionLabel.text = item.description
             graphic = container
         }
     }

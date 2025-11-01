@@ -1,4 +1,4 @@
-package dev.ag6.mclauncher.utils.property
+package dev.ag6.mclauncher.util.property
 
 import javafx.beans.property.SimpleObjectProperty
 import kotlin.reflect.KProperty

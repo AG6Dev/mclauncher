@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dev.ag6.mclauncher.minecraft.GameVersion
 import dev.ag6.mclauncher.minecraft.GameVersionHandler
+import dev.ag6.mclauncher.util.getDataLocation
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import kotlinx.coroutines.*
@@ -11,22 +12,20 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
 
-class InstanceManager(dataDirectory: Path) {
+class InstanceManager(private val gameVersionHandler: GameVersionHandler) {
     val instances: ObservableList<GameInstance> = FXCollections.observableArrayList()
-    private val instancesPath: Path = dataDirectory.resolve("instances")
+    private val instancesPath: Path = getDataLocation().resolve("instances")
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     init {
         Files.createDirectories(instancesPath)
     }
 
-    fun createInstance(name: String, description: String, version: GameVersion) {
-        val newInstance = GameInstance(UUID.randomUUID(), name, description, version)
-        scope.launch { GameVersionHandler.fetchVersionMeta(version) }
+    fun createInstance(name: String, version: GameVersion) {
+        val newInstance = GameInstance(UUID.randomUUID(), name, version)
         instances.add(newInstance)
     }
 
-    //TODO: coroutines
     fun loadInstances() {
         try {
             val files = Files.list(instancesPath)
@@ -74,7 +73,6 @@ class InstanceManager(dataDirectory: Path) {
 
     companion object {
         private val gson: Gson = GsonBuilder().setPrettyPrinting()
-            .registerTypeAdapter(GameInstance::class.java, GameInstanceTypeAdapter)
             .disableHtmlEscaping()
             .create()
     }

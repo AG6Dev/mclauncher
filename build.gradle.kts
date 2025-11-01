@@ -64,11 +64,8 @@ dependencies {
 
     implementation("com.google.code.gson:gson:${property("gsonVersion")}")
 
-    implementation(platform("io.insert-koin:koin-bom:${property("koinBomVersion")}"))
-    implementation("io.insert-koin:koin-core")
-
     implementation("io.github.oshai:kotlin-logging-jvm:${property("kotlinLoggingVersion")}")
-    implementation("org.slf4j:slf4j-simple:${property("slf4jVersion")}")
+    implementation("ch.qos.logback:logback-classic:${property("logbackVersion")}")
     implementation("io.github.palexdev:materialfx:${property("materialfxVersion")}")
     implementation("com.squareup.okhttp3:okhttp:${property("okhttpVersion")}")
 

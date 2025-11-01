@@ -1,8 +1,7 @@
 package dev.ag6.mclauncher.content.main
 
 import dev.ag6.mclauncher.MCLauncher
-import dev.ag6.mclauncher.utils.Window
-import dev.ag6.mclauncher.utils.styleAs
+import dev.ag6.mclauncher.util.styleAs
 import io.github.palexdev.materialfx.controls.MFXIconWrapper
 import javafx.application.Platform
 import javafx.css.PseudoClass
@@ -12,8 +11,9 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.layout.Region
 import javafx.scene.paint.Color
+import javafx.stage.Stage
 
-class WindowHeader(private val window: () -> Window) : HBox() {
+class WindowHeader(private val stage: Stage) : HBox() {
     private var xOffset = 0.0
     private var yOffset = 0.0
 
@@ -30,15 +30,15 @@ class WindowHeader(private val window: () -> Window) : HBox() {
 
         onMousePressed = EventHandler { event ->
             if (canDrag) {
-                xOffset = window.invoke().stage.x - event.screenX
-                yOffset = window.invoke().stage.y - event.screenY
+                xOffset = stage.x - event.screenX
+                yOffset = stage.y - event.screenY
             }
         }
 
         onMouseDragged = EventHandler { event ->
             if (canDrag) {
-                window.invoke().stage.x = event.screenX + xOffset
-                window.invoke().stage.y = event.screenY + yOffset
+                stage.x = event.screenX + xOffset
+                stage.y = event.screenY + yOffset
             }
         }
 
@@ -53,7 +53,7 @@ class WindowHeader(private val window: () -> Window) : HBox() {
             onMousePressed = EventHandler { canDrag = false }
             onMouseReleased = EventHandler { _ ->
                 canDrag = true
-                window.invoke().stage.isIconified = true
+                stage.isIconified = true
             }
         }
 
@@ -61,9 +61,9 @@ class WindowHeader(private val window: () -> Window) : HBox() {
             onMousePressed = EventHandler { canDrag = false }
             onMouseReleased = EventHandler {
                 canDrag = true
-                val currentValue = window.invoke().stage.isAlwaysOnTop
+                val currentValue = stage.isAlwaysOnTop
                 this.pseudoClassStateChanged(PseudoClass.getPseudoClass("always-on-top"), !currentValue)
-                window.invoke().stage.isAlwaysOnTop = !currentValue
+                stage.isAlwaysOnTop = !currentValue
             }
         }
 

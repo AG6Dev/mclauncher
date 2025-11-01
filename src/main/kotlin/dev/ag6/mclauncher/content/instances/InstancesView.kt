@@ -2,7 +2,7 @@ package dev.ag6.mclauncher.content.instances
 
 import dev.ag6.mclauncher.instance.GameInstance
 import dev.ag6.mclauncher.instance.InstanceManager
-import dev.ag6.mclauncher.utils.styleAs
+import dev.ag6.mclauncher.util.styleAs
 import javafx.scene.control.Label
 import javafx.scene.control.ListView
 import javafx.scene.layout.AnchorPane
