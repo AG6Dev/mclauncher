@@ -1,16 +1,17 @@
 package dev.ag6.mclauncher.minecraft
 
-import com.google.gson.Gson
 import com.google.gson.JsonObject
+import dev.ag6.mclauncher.MCLauncher
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Request
+import okhttp3.Response
 import okio.IOException
 
 object GameVersionHandler {
     private const val VERSION_MANIFEST_URL = "https://launchermeta.mojang.com/mc/game/version_manifest.json"
-    private val httpClient = OkHttpClient()
-    private val gson = Gson()
 
     val gameVersions: ObservableList<GameVersion> = FXCollections.observableArrayList()
     var latestVersion: GameVersion? = null
@@ -20,7 +21,7 @@ object GameVersionHandler {
         try {
             val request = Request.Builder().url(VERSION_MANIFEST_URL).get().build()
 
-            httpClient.newCall(request).enqueue(object : Callback {
+            MCLauncher.HTTP_CLIENT.newCall(request).enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
                     e.printStackTrace()
                 }
@@ -33,11 +34,11 @@ object GameVersionHandler {
 
                         val body = response.body.string()
 
-                        val jsonObject = gson.fromJson(body, JsonObject::class.java)
+                        val jsonObject = MCLauncher.GSON.fromJson(body, JsonObject::class.java)
                         val versions = jsonObject.getAsJsonArray("versions")
 
                         for (jsonElement in versions) {
-                            gameVersions.add(gson.fromJson(jsonElement, GameVersion::class.java))
+                            gameVersions.add(MCLauncher.GSON.fromJson(jsonElement, GameVersion::class.java))
                         }
 
                         val latest = jsonObject.getAsJsonObject("latest")
@@ -46,6 +47,8 @@ object GameVersionHandler {
 
                         latestVersion = gameVersions.find { it.id == latestReleaseId }
                         latestSnapshot = gameVersions.find { it.id == latestSnapshotId }
+
+                        MCLauncher.LOGGER.info { "Fetched ${gameVersions.size} game versions." }
                     }
                 }
             })

@@ -1,9 +1,8 @@
-package dev.ag6.mclauncher.content.main
+package dev.ag6.mclauncher.view.main
 
-import dev.ag6.mclauncher.content.View
+import dev.ag6.mclauncher.view.View
 import dev.ag6.mclauncher.util.styleAs
 import io.github.palexdev.materialfx.controls.MFXIconWrapper
-import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.control.ToggleButton
 import javafx.scene.control.ToggleGroup

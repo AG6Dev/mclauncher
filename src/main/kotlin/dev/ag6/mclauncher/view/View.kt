@@ -1,4 +1,4 @@
-package dev.ag6.mclauncher.content
+package dev.ag6.mclauncher.view
 
 import javafx.scene.layout.Region
 import javafx.util.Builder

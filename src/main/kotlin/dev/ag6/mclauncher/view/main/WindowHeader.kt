@@ -1,4 +1,4 @@
-package dev.ag6.mclauncher.content.main
+package dev.ag6.mclauncher.view.main
 
 import dev.ag6.mclauncher.MCLauncher
 import dev.ag6.mclauncher.util.styleAs

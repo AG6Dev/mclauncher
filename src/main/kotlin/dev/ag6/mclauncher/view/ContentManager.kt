@@ -1,8 +1,8 @@
-package dev.ag6.mclauncher.content
+package dev.ag6.mclauncher.view
 
 import dev.ag6.mclauncher.MCLauncher
 import dev.ag6.mclauncher.MCLauncher.Companion.VERSION
-import dev.ag6.mclauncher.content.main.WindowHeader
+import dev.ag6.mclauncher.view.main.WindowHeader
 import dev.ag6.mclauncher.util.WindowCreator
 import dev.ag6.mclauncher.util.styleAs
 import javafx.application.Platform
