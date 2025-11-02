@@ -73,6 +73,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("coroutinesVersion")}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:${property("coroutinesVersion")}")
 
+    implementation("io.github.micheljung:fxstage:${property("fxStageVersion")}")
+
     implementation("dev.ag6:konfig:${property("ag6KonfigVersion")}")
 }
 

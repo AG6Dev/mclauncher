@@ -1,79 +1,85 @@
 package dev.ag6.mclauncher.instance
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
+import dev.ag6.mclauncher.MCLauncher
 import dev.ag6.mclauncher.minecraft.GameVersion
-import dev.ag6.mclauncher.minecraft.GameVersionHandler
 import dev.ag6.mclauncher.util.getDataLocation
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import kotlinx.coroutines.*
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.*
 
-class InstanceManager(private val gameVersionHandler: GameVersionHandler) {
+object InstanceManager {
+    //make this configurable
+    private val INSTANCE_DIRECTORY = getDataLocation().resolve("instances")
     val instances: ObservableList<GameInstance> = FXCollections.observableArrayList()
-    private val instancesPath: Path = getDataLocation().resolve("instances")
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    init {
-        Files.createDirectories(instancesPath)
+    fun loadAllInstances() {
+        try {
+            if (!Files.exists(INSTANCE_DIRECTORY)) {
+                Files.createDirectories(INSTANCE_DIRECTORY)
+                return
+            }
+
+            Files.list(INSTANCE_DIRECTORY).use { stream ->
+                {
+                    stream.filter { Files.isDirectory(it) }.forEach {
+                        val instanceResult = this.loadInstanceFromDirectory(it)
+                        if (instanceResult.isSuccess()) {
+                            instances.add(instanceResult.instance)
+                        } else {
+                            MCLauncher.LOGGER.warn { "Failed to load instance from directory ${instanceResult.error}" }
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            MCLauncher.LOGGER.error(e) { "Failed to load instances" }
+        }
+    }
+
+    fun saveAllInstances() {
+        instances.forEach { instance ->
+            try {
+                val instanceDir = INSTANCE_DIRECTORY.resolve(instance.name)
+                if (!Files.exists(instanceDir)) {
+                    Files.createDirectories(instanceDir)
+                }
+
+                val instanceConfigFile = instanceDir.resolve("instance.json")
+                Files.newBufferedWriter(instanceConfigFile).use { writer ->
+                    val instanceJson = instance.toJson()
+                    MCLauncher.GSON.toJson(instanceJson, writer)
+                }
+            } catch (e: Exception) {
+                MCLauncher.LOGGER.error(e) { "Failed to save instance ${instance.id}" }
+            }
+        }
     }
 
     fun createInstance(name: String, version: GameVersion) {
-        val newInstance = GameInstance(UUID.randomUUID(), name, version)
+        val newInstance = GameInstance(name, version)
         instances.add(newInstance)
     }
 
-    fun loadInstances() {
+    private fun loadInstanceFromDirectory(path: Path): LoadInstanceResult {
         try {
-            val files = Files.list(instancesPath)
-                .filter(Files::isDirectory)
-                .toList()
+            val instanceConfigFile = path.resolve("instance.json")
 
-            instances.clear()
-            for (file in files) {
-                val instanceFile = file.resolve("instance.json")
-                if (Files.exists(instanceFile)) {
-                    val jsonString = Files.readString(instanceFile)
-                    val gameInstance: GameInstance = gson.fromJson(jsonString, GameInstance::class.java)
-                    instances.add(gameInstance)
-                } else {
-                    println("Warning: Instance file not found for ${file.fileName}")
-                }
+            if(!Files.exists(instanceConfigFile)) {
+                return LoadInstanceResult.failure("Instance config file does not exist: $instanceConfigFile")
             }
-            println("Loaded ${instances.size} instances")
+
+            val instanceJson = Files.newBufferedReader(instanceConfigFile).use { reader ->
+                MCLauncher.GSON.fromJson(reader, JsonObject::class.java)
+            }
+
+            val instance = GameInstance.fromJson(instanceJson)
+            return LoadInstanceResult.success(instance)
         } catch (e: Exception) {
-            error("Failed to load instances from disk: ${e.message}")
+            return LoadInstanceResult.failure("Failed to load instance from directory $path: ${e.message}")
         }
     }
 
-    private suspend fun saveInstanceToDisk(gameInstance: GameInstance) = withContext(Dispatchers.IO) {
-        try {
-            val filePath = instancesPath.resolve("${gameInstance.uuid}/instance.json")
 
-            val jsonString = gson.toJson(gameInstance)
-            Files.createDirectories(filePath.parent)
-            Files.writeString(filePath, jsonString)
-        } catch (e: Exception) {
-            error("Failed to save instance ${gameInstance.uuid} to disk: ${e.message}")
-        }
-    }
-
-    suspend fun saveAllInstances() {
-        println("Saving all instances to disk...")
-
-        withContext(Dispatchers.IO) {
-            instances.map { async { saveInstanceToDisk(it) } }
-        }.awaitAll()
-
-        println("Saved ${instances.size} instances to disk.")
-    }
-
-    companion object {
-        private val gson: Gson = GsonBuilder().setPrettyPrinting()
-            .disableHtmlEscaping()
-            .create()
-    }
 }

@@ -6,7 +6,7 @@ import dev.ag6.mclauncher.view.ContentManager
 import dev.ag6.mclauncher.minecraft.GameVersionHandler
 import dev.ag6.mclauncher.util.getDataLocation
 import dev.ag6.mclauncher.util.getRefreshRate
-import dev.ag6.mclauncher.view.instances.InstancesView
+import dev.ag6.mclauncher.view.instance.InstancesView
 import fr.brouillard.oss.cssfx.CSSFX
 import io.github.oshai.kotlinlogging.KotlinLogging
 import javafx.application.Application

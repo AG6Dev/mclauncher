@@ -42,7 +42,7 @@ class WindowHeader(private val stage: Stage) : HBox() {
             }
         }
 
-        children.addAll(title, spacer, buttonContainer)
+        children.addAll(title, spacer, )
     }
 
     private fun createWindowControl(iconId: String, color: Color): MFXIconWrapper =

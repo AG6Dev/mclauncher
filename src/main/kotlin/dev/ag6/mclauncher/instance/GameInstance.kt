@@ -7,20 +7,21 @@ import dev.ag6.mclauncher.util.property.objectProperty
 import dev.ag6.mclauncher.util.property.stringProperty
 import java.util.*
 
-class GameInstance(uuid: UUID, name: String, version: GameVersion?) {
+class GameInstance(id: UUID, name: String, version: GameVersion?) {
+    constructor(name: String, version: GameVersion?) : this(UUID.randomUUID(), name, version)
     val name: String by stringProperty(name)
 
-    val uuid: UUID by objectProperty(uuid)
+    val id: UUID by objectProperty(id)
 
     val version: GameVersion by objectProperty(version)
 
     override fun toString(): String {
-        return "GameInstance(uuid=$uuid, name='$name', version=$version)"
+        return "GameInstance(id=$id, name='$name', version=$version)"
     }
 
     fun toJson(): JsonObject {
         val json = JsonObject()
-        json.addProperty("uuid", uuid.toString())
+        json.addProperty("id", id.toString())
         json.addProperty("name", name)
         json.addProperty("version", version.id)
         return json
@@ -28,11 +29,11 @@ class GameInstance(uuid: UUID, name: String, version: GameVersion?) {
 
     companion object {
         fun fromJson(json: JsonObject): GameInstance {
-            val uuid = UUID.fromString(json.get("uuid").asString)
+            val id = UUID.fromString(json.get("id").asString)
             val name = json.get("name").asString
             val versionId = json.get("version").asString
 
-            return GameInstance(uuid, name, GameVersionHandler.getVersion(versionId))
+            return GameInstance(id, name, GameVersionHandler.getVersion(versionId))
         }
     }
 }
