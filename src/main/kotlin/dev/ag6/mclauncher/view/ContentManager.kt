@@ -1,18 +1,13 @@
 package dev.ag6.mclauncher.view
 
-import ch.micheljung.fxwindow.FxStage
 import dev.ag6.mclauncher.MCLauncher
 import dev.ag6.mclauncher.MCLauncher.Companion.VERSION
 import dev.ag6.mclauncher.util.WindowCreator
-import dev.ag6.mclauncher.view.main.WindowHeader
 import javafx.application.Platform
 import javafx.geometry.Insets
 import javafx.scene.Scene
-import javafx.scene.control.Label
 import javafx.scene.layout.BorderPane
-import javafx.scene.layout.StackPane
 import javafx.stage.Stage
-import javafx.stage.StageStyle
 
 object ContentManager {
     private val windowPane: BorderPane = BorderPane()
