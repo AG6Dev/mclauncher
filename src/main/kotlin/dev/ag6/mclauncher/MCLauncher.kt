@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder
 import dev.ag6.ktconfig.Konfig
 import dev.ag6.mclauncher.instance.InstanceManager
 import dev.ag6.mclauncher.minecraft.GameVersionHandler
-import dev.ag6.mclauncher.util.getDataLocation
+import dev.ag6.mclauncher.util.getDefaultDataLocation
 import dev.ag6.mclauncher.util.getRefreshRate
 import dev.ag6.mclauncher.view.ContentManager
 import dev.ag6.mclauncher.view.instance.InstancesView
@@ -17,6 +17,7 @@ import javafx.scene.input.KeyCode
 import javafx.stage.Stage
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
+import org.scenicview.ScenicView
 import java.awt.Desktop
 import java.nio.file.Files
 
@@ -24,12 +25,12 @@ class MCLauncher : Application() {
     private var firstStart: Boolean = false
 
     override fun init() {
-        if (Files.notExists(getDataLocation())) {
-            Files.createDirectories(getDataLocation())
+        if (Files.notExists(getDefaultDataLocation())) {
+            Files.createDirectories(getDefaultDataLocation())
             this.firstStart = true
         }
 
-        Konfig.register(Config::class.java, getDataLocation().resolve("config.json"))
+        Konfig.register(Config::class.java, getDefaultDataLocation().resolve("config.json"))
 
         GameVersionHandler.fetchGameVersions()
         InstanceManager.loadAllInstances()
@@ -44,9 +45,11 @@ class MCLauncher : Application() {
 
         primaryStage.scene.setOnKeyPressed { event ->
             if (event.code == KeyCode.F1) {
-                Desktop.getDesktop().open(getDataLocation().toFile())
+                Desktop.getDesktop().open(getDefaultDataLocation().toFile())
             }
         }
+
+        ScenicView.show(primaryStage.scene)
     }
 
     override fun stop() = runBlocking {

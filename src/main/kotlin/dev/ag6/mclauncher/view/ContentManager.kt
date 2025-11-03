@@ -1,8 +1,8 @@
 package dev.ag6.mclauncher.view
 
-import dev.ag6.mclauncher.MCLauncher
 import dev.ag6.mclauncher.MCLauncher.Companion.VERSION
 import dev.ag6.mclauncher.util.WindowCreator
+import dev.ag6.mclauncher.util.getResourceStream
 import javafx.application.Platform
 import javafx.geometry.Insets
 import javafx.scene.Scene
@@ -23,7 +23,7 @@ object ContentManager {
 
         WindowCreator.create(stage) {
             title = "MCLauncher $VERSION"
-            icon = MCLauncher::class.java.getResourceAsStream("icon.png")
+            icon = getResourceStream("icon idk.png")
 //            stageStyle = StageStyle.TRANSPARENT
 
             minWidth = 800

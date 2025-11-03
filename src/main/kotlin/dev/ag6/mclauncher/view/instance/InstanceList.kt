@@ -24,9 +24,19 @@ class InstanceList : ScrollPane() {
         instances.addListener(ListChangeListener { refreshItems() })
     }
 
+    fun filterItems(predicate: (GameInstance) -> Boolean) {
+        container.children.clear()
+        for (instance in instances) {
+            if (predicate(instance)) {
+                val item = InstanceListItem(instance)
+                container.children.add(item)
+            }
+        }
+    }
+
     private fun refreshItems() {
         container.children.clear()
-        for(instance in instances) {
+        for (instance in instances) {
             val item = InstanceListItem(instance)
             container.children.add(item)
         }

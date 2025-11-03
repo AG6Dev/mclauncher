@@ -3,7 +3,7 @@ package dev.ag6.mclauncher.instance
 import com.google.gson.JsonObject
 import dev.ag6.mclauncher.MCLauncher
 import dev.ag6.mclauncher.minecraft.GameVersion
-import dev.ag6.mclauncher.util.getDataLocation
+import dev.ag6.mclauncher.util.getDefaultDataLocation
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import java.nio.file.Files
@@ -11,7 +11,7 @@ import java.nio.file.Path
 
 object InstanceManager {
     //make this configurable
-    private val INSTANCE_DIRECTORY = getDataLocation().resolve("instances")
+    private val INSTANCE_DIRECTORY = getDefaultDataLocation().resolve("instances")
     val instances: ObservableList<GameInstance> = FXCollections.observableArrayList()
 
     fun loadAllInstances() {

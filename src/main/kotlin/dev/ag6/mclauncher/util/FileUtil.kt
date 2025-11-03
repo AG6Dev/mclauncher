@@ -6,7 +6,7 @@ import java.net.URL
 import java.nio.file.Path
 import java.nio.file.Paths
 
-fun getDataLocation(): Path {
+fun getDefaultDataLocation(): Path {
     val userHome = System.getProperty("user.home")
     val osName = System.getProperty("os.name").lowercase()
 
