@@ -16,6 +16,10 @@ data class GameVersion(val id: String, val type: Type, val url: String, val time
         return true
     }
 
+    override fun toString(): String {
+        return "$id ($type)"
+    }
+
     override fun hashCode(): Int {
         return javaClass.hashCode()
     }

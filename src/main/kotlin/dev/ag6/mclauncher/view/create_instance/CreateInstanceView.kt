@@ -1,10 +1,15 @@
 package dev.ag6.mclauncher.view.create_instance
 
+import dev.ag6.mclauncher.instance.InstanceManager
+import dev.ag6.mclauncher.minecraft.GameVersion
+import dev.ag6.mclauncher.minecraft.GameVersionHandler
 import dev.ag6.mclauncher.view.ContentManager
 import dev.ag6.mclauncher.view.View
 import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.control.Button
+import javafx.scene.control.ComboBox
+import javafx.scene.control.TextField
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Region
@@ -19,11 +24,25 @@ class CreateInstanceView : View {
             onAction = EventHandler { ContentManager.goBack() }
         }
 
+        val nameField = TextField().apply {
+            promptText = "Instance Name"
+            prefWidth = 200.0
+        }
+
+        val versionSelector = ComboBox<GameVersion>().apply {
+            promptText = "Select Version"
+            prefWidth = 200.0
+            items = GameVersionHandler.gameVersions
+            if (items.isNotEmpty()) {
+                selectionModel.selectFirst()
+            }
+        }
+
         val createButton: Button = Button().apply {
             text = "Create"
             prefWidth = 100.0
             onAction = EventHandler {
-
+                InstanceManager.createInstance(nameField.text, versionSelector.value)
             }
         }
 
@@ -33,6 +52,11 @@ class CreateInstanceView : View {
         }
         buttonContainer.children.addAll(backButton, createButton)
 
+        container.center = HBox().apply {
+            spacing = 10.0
+            alignment = Pos.CENTER
+            children.addAll(nameField, versionSelector)
+        }
         container.bottom = buttonContainer
 
         return container

@@ -21,18 +21,16 @@ object InstanceManager {
                 return
             }
 
-            Files.list(INSTANCE_DIRECTORY).use { stream ->
-                {
-                    stream.filter { Files.isDirectory(it) }.forEach {
-                        val instanceResult = this.loadInstanceFromDirectory(it)
-                        if (instanceResult.isSuccess()) {
-                            instances.add(instanceResult.instance)
-                        } else {
-                            MCLauncher.LOGGER.warn { "Failed to load instance from directory ${instanceResult.error}" }
-                        }
-                    }
-                }
-            }
+           Files.list(INSTANCE_DIRECTORY).forEach {
+               if(Files.isDirectory(it)) {
+                   val result = loadInstanceFromDirectory(it)
+                     if(result.isSuccess()) {
+                          instances.add(result.instance)
+                     } else {
+                          MCLauncher.LOGGER.error { "Failed to load instance from ${it.fileName}: ${result.error}" }
+                     }
+               }
+           }
         } catch (e: Exception) {
             MCLauncher.LOGGER.error(e) { "Failed to load instances" }
         }
@@ -41,7 +39,7 @@ object InstanceManager {
     fun saveAllInstances() {
         instances.forEach { instance ->
             try {
-                val instanceDir = INSTANCE_DIRECTORY.resolve(instance.name)
+                val instanceDir = INSTANCE_DIRECTORY.resolve(instance.name.get())
                 if (!Files.exists(instanceDir)) {
                     Files.createDirectories(instanceDir)
                 }

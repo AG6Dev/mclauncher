@@ -3,17 +3,18 @@ package dev.ag6.mclauncher.instance
 import com.google.gson.JsonObject
 import dev.ag6.mclauncher.minecraft.GameVersion
 import dev.ag6.mclauncher.minecraft.GameVersionHandler
-import dev.ag6.mclauncher.util.property.objectProperty
-import dev.ag6.mclauncher.util.property.stringProperty
+import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.property.SimpleStringProperty
 import java.util.*
 
 class GameInstance(id: UUID, name: String, version: GameVersion?) {
     constructor(name: String, version: GameVersion?) : this(UUID.randomUUID(), name, version)
-    val name: String by stringProperty(name)
 
-    val id: UUID by objectProperty(id)
+    val name: SimpleStringProperty = SimpleStringProperty(name)
 
-    val version: GameVersion by objectProperty(version)
+    val id: SimpleObjectProperty<UUID> = SimpleObjectProperty(id)
+
+    val version: SimpleObjectProperty<GameVersion> = SimpleObjectProperty(version)
 
     override fun toString(): String {
         return "GameInstance(id=$id, name='$name', version=$version)"
@@ -21,9 +22,9 @@ class GameInstance(id: UUID, name: String, version: GameVersion?) {
 
     fun toJson(): JsonObject {
         val json = JsonObject()
-        json.addProperty("id", id.toString())
-        json.addProperty("name", name)
-        json.addProperty("version", version.id)
+        json.addProperty("id", id.get().toString())
+        json.addProperty("name", name.get())
+        json.addProperty("version", version.get().id)
         return json
     }
 
