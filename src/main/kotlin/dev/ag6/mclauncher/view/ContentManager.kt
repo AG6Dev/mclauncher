@@ -11,8 +11,9 @@ import javafx.stage.Stage
 
 object ContentManager {
     private val windowPane: BorderPane = BorderPane()
-    private lateinit var stage: Stage
     private val navigationStack: ArrayDeque<View> = ArrayDeque()
+    lateinit var stage: Stage
+        private set
 
     fun init(stage: Stage) {
         this.stage = stage
@@ -23,8 +24,7 @@ object ContentManager {
 
         WindowCreator.create(stage) {
             title = "MCLauncher $VERSION"
-            icon = getResourceStream("icon idk.png")
-//            stageStyle = StageStyle.TRANSPARENT
+            icon = getResourceStream("icon.png")
 
             minWidth = 800
             minHeight = 600

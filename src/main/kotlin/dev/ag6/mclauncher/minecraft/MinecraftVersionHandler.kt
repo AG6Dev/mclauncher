@@ -6,12 +6,12 @@ import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import okhttp3.Request
 
-object GameVersionHandler {
+object MinecraftVersionHandler {
     private const val VERSION_MANIFEST_URL = "https://launchermeta.mojang.com/mc/game/version_manifest.json"
 
-    val gameVersions: ObservableList<GameVersion> = FXCollections.observableArrayList()
-    var latestVersion: GameVersion? = null
-    var latestSnapshot: GameVersion? = null
+    val minecraftVersions: ObservableList<MinecraftVersion> = FXCollections.observableArrayList()
+    lateinit var latestVersion: MinecraftVersion
+    lateinit var latestSnapshot: MinecraftVersion
 
     fun fetchGameVersions() {
         try {
@@ -29,25 +29,27 @@ object GameVersionHandler {
                 val versions = jsonObject.getAsJsonArray("versions")
 
                 for (jsonElement in versions) {
-                    gameVersions.add(MCLauncher.GSON.fromJson(jsonElement, GameVersion::class.java))
+                    minecraftVersions.add(MCLauncher.GSON.fromJson(jsonElement, MinecraftVersion::class.java))
                 }
 
                 val latest = jsonObject.getAsJsonObject("latest")
                 val latestReleaseId = latest.asJsonObject.get("release").asString
                 val latestSnapshotId = latest.asJsonObject.get("snapshot").asString
 
-                latestVersion = gameVersions.find { it.id == latestReleaseId }
-                latestSnapshot = gameVersions.find { it.id == latestSnapshotId }
+                latestVersion =
+                    minecraftVersions.find { it.id == latestReleaseId } ?: error("Latest release version not found.")
+                latestSnapshot =
+                    minecraftVersions.find { it.id == latestSnapshotId } ?: error("Latest snapshot version not found.")
 
-                MCLauncher.LOGGER.info { "Fetched ${gameVersions.size} game versions." }
+                MCLauncher.LOGGER.info { "Fetched ${minecraftVersions.size} game versions." }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            MCLauncher.LOGGER.error(e) { "Error fetching game versions: ${e.message}" }
         }
     }
 
-    fun getVersion(id: String): GameVersion? {
-        return gameVersions.find { it.id == id }
+    fun getVersion(id: String): MinecraftVersion? {
+        return minecraftVersions.find { it.id == id }
     }
 }
 

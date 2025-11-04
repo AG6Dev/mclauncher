@@ -1,17 +1,61 @@
 package dev.ag6.mclauncher.view.instance
 
 import dev.ag6.mclauncher.instance.GameInstance
+import dev.ag6.mclauncher.instance.InstanceManager
+import dev.ag6.mclauncher.view.components.ConfirmActionWindow
+import javafx.event.EventHandler
+import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 
-class InstanceListItem(instance: GameInstance): HBox() {
+class InstanceListItem(private val instance: GameInstance) : HBox() {
     init {
-        children.addAll(Label(instance.name.get()), Label(" - "), Label(instance.version.get().id))
+        val infoBox = HBox().apply {
+            children.addAll(Label(instance.name.get()), Label(" - "), Label(instance.version.get().id))
+        }
+
+        val runButton = InstanceRunButton()
+        val deleteButton = InstanceDeleteButton()
+
+        val buttonContainer = HBox().apply {
+            spacing = 10.0
+            isVisible = false
+            children.addAll(runButton, deleteButton)
+        }
+
+        val spacer = Region().apply {
+            setHgrow(this, Priority.ALWAYS)
+        }
 
         setOnMouseEntered {
             border = Border(BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT))
+            buttonContainer.isVisible = true
         }
-        setOnMouseExited { border = Border.EMPTY }
+        setOnMouseExited {
+            border = Border.EMPTY
+            buttonContainer.isVisible = false
+        }
+
+        children.addAll(infoBox, spacer, buttonContainer)
+    }
+
+    private inner class InstanceRunButton : Button() {
+        init {
+
+        }
+    }
+
+    private inner class InstanceDeleteButton : Button() {
+        init {
+            text = "Delete"
+            onAction = EventHandler {
+                ConfirmActionWindow("Are you sure you want to delete the instance \"${instance.name.get()}\"? This action cannot be undone.") {
+                    InstanceManager.deleteInstance(
+                        instance
+                    )
+                }
+            }
+        }
     }
 }

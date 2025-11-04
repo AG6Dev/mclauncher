@@ -58,8 +58,6 @@ javafx {
 }
 
 dependencies {
-    implementation(files("libs/scenicview.jar"))
-
     implementation("fr.brouillard.oss:cssfx:${property("cssfxVersion")}")
 
     implementation("com.google.code.gson:gson:${property("gsonVersion")}")

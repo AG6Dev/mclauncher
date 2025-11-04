@@ -1,14 +1,11 @@
 package dev.ag6.mclauncher.view.create_instance
 
 import dev.ag6.mclauncher.instance.InstanceManager
-import dev.ag6.mclauncher.minecraft.GameVersion
-import dev.ag6.mclauncher.minecraft.GameVersionHandler
 import dev.ag6.mclauncher.view.ContentManager
 import dev.ag6.mclauncher.view.View
 import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.control.Button
-import javafx.scene.control.ComboBox
 import javafx.scene.control.TextField
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
@@ -29,20 +26,14 @@ class CreateInstanceView : View {
             prefWidth = 200.0
         }
 
-        val versionSelector = ComboBox<GameVersion>().apply {
-            promptText = "Select Version"
-            prefWidth = 200.0
-            items = GameVersionHandler.gameVersions
-            if (items.isNotEmpty()) {
-                selectionModel.selectFirst()
-            }
-        }
+        val versionSelector = VersionSelectorList()
 
         val createButton: Button = Button().apply {
             text = "Create"
             prefWidth = 100.0
             onAction = EventHandler {
-                InstanceManager.createInstance(nameField.text, versionSelector.value)
+                InstanceManager.createInstance(nameField.text, versionSelector.getSelectedVersion())
+                ContentManager.goBack()
             }
         }
 

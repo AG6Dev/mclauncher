@@ -18,9 +18,9 @@ fun getDefaultDataLocation(): Path {
 }
 
 fun getResourceStream(path: String): InputStream? {
-    return MCLauncher::class.java.getResourceAsStream(path)
+    return MCLauncher::class.java.classLoader.getResourceAsStream(path)
 }
 
 fun getResource(path: String): URL? {
-    return MCLauncher::class.java.getResource(path)
+    return MCLauncher::class.java.classLoader.getResource(path)
 }

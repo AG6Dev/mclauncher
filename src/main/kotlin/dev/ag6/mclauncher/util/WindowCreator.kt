@@ -21,7 +21,8 @@ class WindowCreator {
     var fullscreen: Boolean = false
     var maximized: Boolean = false
     var stageStyle: StageStyle = StageStyle.DECORATED
-    var modality: Modality = Modality.NONE
+    var owner: Stage? = null
+    var modality: Modality? = null
 
     var icon: InputStream? = null
 
@@ -29,13 +30,13 @@ class WindowCreator {
     var onCreate: (Stage) -> Unit = {}
 
     companion object {
-        inline fun create(block: WindowCreator.() -> Unit): Stage {
+        fun create(block: WindowCreator.() -> Unit): Stage {
             val stage = Stage()
             create(stage, block)
             return stage
         }
 
-        inline fun create(stage: Stage, block: WindowCreator.() -> Unit) {
+        fun create(stage: Stage, block: WindowCreator.() -> Unit) {
             val creator = WindowCreator().apply(block)
             stage.title = creator.title
             if (creator.width > 0 && creator.height > 0) {
@@ -73,7 +74,19 @@ class WindowCreator {
                 stage.scene = it
             }
 
+            creator.owner?.let {
+                stage.initOwner(it)
+            }
+
+            creator.modality?.let {
+                stage.initModality(it)
+            }
+
             creator.onCreate(stage)
+        }
+
+        fun destroyWindow(stage: Stage) {
+            stage.close()
         }
     }
 }
