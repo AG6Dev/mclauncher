@@ -1,16 +1,13 @@
 package dev.ag6.mclauncher.instance
 
-import com.google.gson.JsonObject
 import dev.ag6.mclauncher.MCLauncher
 import dev.ag6.mclauncher.minecraft.MinecraftVersion
 import dev.ag6.mclauncher.util.getDefaultDataLocation
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import java.nio.file.Files
-import java.nio.file.Path
 
 object InstanceManager {
-    //make this configurable
     private val INSTANCE_DIRECTORY = getDefaultDataLocation().resolve("instances")
     val instances: ObservableList<GameInstance> = FXCollections.observableArrayList()
 
@@ -21,78 +18,44 @@ object InstanceManager {
                 return
             }
 
-           Files.list(INSTANCE_DIRECTORY).forEach {
-               if(Files.isDirectory(it)) {
-                   val result = loadInstanceFromDirectory(it)
-                     if(result.isSuccess()) {
-                          instances.add(result.instance)
-                     } else {
-                          MCLauncher.LOGGER.error { "Failed to load instance from ${it.fileName}: ${result.error}" }
-                     }
-               }
-           }
+            Files.list(INSTANCE_DIRECTORY).forEach {
+                if (Files.isDirectory(it)) {
+                    val result = GameInstance.fromDirectory(it)
+                    if (result.isSuccess()) {
+                        instances.add(result.instance)
+                    } else {
+                        MCLauncher.LOGGER.error { "Failed to load instance from ${it.fileName}: ${result.error}" }
+                    }
+                }
+            }
         } catch (e: Exception) {
             MCLauncher.LOGGER.error(e) { "Failed to load instances" }
         }
     }
 
-    fun saveAllInstances() {
-        instances.forEach(this::saveInstance)
-    }
-
-    fun createInstance(name: String, version: MinecraftVersion) {
-        val newInstance = GameInstance(name, version)
-        this.saveInstance(newInstance)
+    fun createInstance(name: String, version: MinecraftVersion): GameInstance {
+        val newInstance = GameInstance(name = name, version = { version }, directory = INSTANCE_DIRECTORY.resolve(name))
+        newInstance.save()
         instances.add(newInstance)
+        return newInstance
     }
 
-    private fun loadInstanceFromDirectory(path: Path): LoadInstanceResult {
-        try {
-            val instanceConfigFile = path.resolve("instance.json")
-
-            if(!Files.exists(instanceConfigFile)) {
-                return LoadInstanceResult.failure("Instance config file does not exist: $instanceConfigFile")
-            }
-
-            val instanceJson = Files.newBufferedReader(instanceConfigFile).use { reader ->
-                MCLauncher.GSON.fromJson(reader, JsonObject::class.java)
-            }
-
-            val instance = GameInstance.fromJson(instanceJson)
-            return LoadInstanceResult.success(instance)
-        } catch (e: Exception) {
-            return LoadInstanceResult.failure("Failed to load instance from directory $path: ${e.message}")
-        }
+    fun saveAllInstances() {
+        instances.forEach(GameInstance::save)
     }
 
     fun deleteInstance(instance: GameInstance) {
         try {
-            val instanceDir = INSTANCE_DIRECTORY.resolve(instance.id.get().toString())
+            val instanceDir = instance.directory
             if (Files.exists(instanceDir)) {
                 Files.walk(instanceDir)
                     .sorted(Comparator.reverseOrder())
-                    .forEach { Files.delete(it) }
+                    .forEach(Files::delete)
             }
             instances.remove(instance)
         } catch (e: Exception) {
-            MCLauncher.LOGGER.error(e) { "Failed to delete instance ${instance.id}" }
-        }
-    }
-
-    fun saveInstance(instance: GameInstance) {
-        try {
-            val instanceDir = INSTANCE_DIRECTORY.resolve(instance.id.get().toString())
-            if (!Files.exists(instanceDir)) {
-                Files.createDirectories(instanceDir)
-            }
-
-            val instanceConfigFile = instanceDir.resolve("instance.json")
-            Files.newBufferedWriter(instanceConfigFile).use { writer ->
-                val instanceJson = instance.toJson()
-                MCLauncher.GSON.toJson(instanceJson, writer)
-            }
-        } catch (e: Exception) {
-            MCLauncher.LOGGER.error(e) { "Failed to save instance ${instance.id}" }
+            instance.save()
+            MCLauncher.LOGGER.error(e) { "Failed to delete instance ${instance.id}, undoing" }
         }
     }
 }

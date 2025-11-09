@@ -7,5 +7,5 @@ import dev.ag6.mclauncher.util.getDefaultDataLocation
 @Config
 class Config {
     @ConfigProperty
-    var instancesDirectory: String = getDefaultDataLocation().toString()
+    var instancesDirectory: String = getDefaultDataLocation().resolve("instances").toString()
 }
