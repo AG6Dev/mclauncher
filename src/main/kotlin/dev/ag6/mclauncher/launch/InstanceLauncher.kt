@@ -14,6 +14,7 @@ import java.nio.file.Path
 
 object InstanceLauncher {
     val METADATA_CACHE_LOCATION: Path = getDefaultDataLocation().resolve("version_meta")
+    val LIBRARY_LOCATION: Path = getDefaultDataLocation().resolve("libraries")
     private val executor: TaskExecutor = TaskExecutor(8)
     private val launchProcesses: MutableMap<GameInstance, Process> = mutableMapOf()
 
@@ -21,7 +22,9 @@ object InstanceLauncher {
         val metadataTask = GetVersionMetadataTask(gameInstance.version()!!)
         val metadata = executor.submit(metadataTask).await()
 
+        println(metadata.libraries.size)
         val libTasks: List<DownloadLibraryTask> = getLibrariesToDownload(metadata).map(::DownloadLibraryTask)
+        println(libTasks.size)
         val libraryTask = CompositeTask("Download MC Libraries", true, libTasks)
         executor.submit(libraryTask).await()
     }
@@ -53,7 +56,7 @@ object InstanceLauncher {
                     }
                 }
 
-                allowed && !Files.exists(DownloadLibraryTask.LIBRARY_LOCATION.resolve(it.name))
+                allowed && !Files.exists(LIBRARY_LOCATION.resolve(it.getJarPath()))
             } catch (e: Exception) {
                 allowed
             }

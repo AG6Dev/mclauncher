@@ -22,6 +22,9 @@ data class PistonVersionMetadata(
 
     companion object {
         fun fromJson(jsonObject: JsonObject): PistonVersionMetadata {
+            val librariesJsonObject = jsonObject.getAsJsonArray("libraries")
+
+
             return PistonVersionMetadata(
                 arguments = MCLauncher.GSON.fromJson(
                     jsonObject.getAsJsonObject("arguments"),
@@ -32,7 +35,7 @@ data class PistonVersionMetadata(
                 downloads = PistonDownloads.fromJson(jsonObject.getAsJsonObject("downloads")),
                 id = jsonObject.get("id").asString,
                 javaVersion = PistonJavaVersion.fromJson(jsonObject.getAsJsonObject("javaVersion")),
-                libraries = jsonObject.getAsJsonArray("libraries").map { PistonLibrary.fromJson(it.asJsonObject) },
+                libraries = librariesJsonObject.map { PistonLibrary.fromJson(it.asJsonObject) },
                 logging = PistonLogging.fromJson(jsonObject.getAsJsonObject("logging")),
                 mainClass = jsonObject.get("mainClass").asString,
                 minimumLauncherVersion = jsonObject.get("minimumLauncherVersion").asInt,

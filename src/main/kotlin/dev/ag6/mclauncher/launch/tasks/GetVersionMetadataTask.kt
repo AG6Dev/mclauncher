@@ -20,7 +20,8 @@ class GetVersionMetadataTask(private val minecraftVersion: MinecraftVersion) : T
         if (Files.exists(metadataLocation)) {
             try {
                 val metadata = Files.newBufferedReader(metadataLocation).use {
-                    MCLauncher.GSON.fromJson(it, PistonVersionMetadata::class.java)
+                    val jsonObject = MCLauncher.GSON.fromJson(it, JsonObject::class.java)
+                    PistonVersionMetadata.fromJson(jsonObject)
                 }
 
                 if (metadata.id == minecraftVersion.id) {
@@ -48,7 +49,7 @@ class GetVersionMetadataTask(private val minecraftVersion: MinecraftVersion) : T
 
             Files.createDirectories(InstanceLauncher.METADATA_CACHE_LOCATION)
             Files.newBufferedWriter(metadataLocation).use { writer ->
-                writer.write(body)
+                MCLauncher.GSON.toJson(json, writer)
             }
 
             metadata

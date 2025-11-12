@@ -2,7 +2,7 @@ package dev.ag6.mclauncher
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import dev.ag6.ktconfig.Konfig
+import dev.ag6.konfig.Konfig
 import dev.ag6.mclauncher.instance.InstanceManager
 import dev.ag6.mclauncher.minecraft.MinecraftVersionHandler
 import dev.ag6.mclauncher.minecraft.piston.*

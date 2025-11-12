@@ -11,6 +11,14 @@ data class PistonLibrary(val name: String, val download: Download?, val rules: L
         return "$group/$artifact/$version/"
     }
 
+    fun getJarPath(): String {
+        val parts = name.split(":")
+        val group = parts[0].replace('.', '/')
+        val artifact = parts[1]
+        val version = parts[2]
+        return "$group/$artifact/$version/$artifact-$version.jar"
+    }
+
     companion object {
         fun fromJson(json: JsonObject): PistonLibrary {
             val name = json.get("name").asString
@@ -52,8 +60,7 @@ data class PistonLibrary(val name: String, val download: Download?, val rules: L
         }
 
         enum class Action {
-            ALLOW,
-            DISALLOW
+            ALLOW, DISALLOW
         }
 
         data class OperatingSystem(val name: String)

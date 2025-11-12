@@ -2,7 +2,6 @@ package dev.ag6.mclauncher.task
 
 import dev.ag6.mclauncher.MCLauncher
 import dev.ag6.mclauncher.minecraft.piston.Download
-import javafx.application.Platform
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -28,7 +27,7 @@ open class DownloadTask(
     override suspend fun execute(): Path = withContext(Dispatchers.IO) {
         if (isCancelled()) throw CancellationException("Task cancelled")
 
-        Platform.runLater { stateProperty.set(Task.State.RUNNING) }
+        setState(Task.State.RUNNING)
 
         Files.createDirectories(destination.parent)
 
@@ -42,26 +41,24 @@ open class DownloadTask(
             val size = body.contentLength()
 
             body.byteStream().use { stream ->
-                {
-                    destination.outputStream().use { output ->
-                        val buffer = ByteArray(8192)
-                        var bytesRead: Int
-                        var totalBytesRead: Long = 0
+                destination.outputStream().use { output ->
+                    val buffer = ByteArray(8192)
+                    var bytesRead: Int
+                    var totalBytesRead: Long = 0
 
-                        while (stream.read(buffer).also { bytesRead = it } != -1) {
-                            if (isCancelled()) throw CancellationException("Task cancelled")
+                    while (stream.read(buffer).also { bytesRead = it } != -1) {
+                        if (isCancelled()) throw CancellationException("Task cancelled")
 
-                            output.write(buffer, 0, bytesRead)
-                            totalBytesRead += bytesRead
+                        output.write(buffer, 0, bytesRead)
+                        totalBytesRead += bytesRead
 
-                            val progress = if (size > 0) {
-                                bytesRead.toFloat() / size
-                            } else {
-                                0.0f
-                            }
-
-                            setProgress(progress)
+                        val progress = if (size > 0) {
+                            bytesRead.toFloat() / size
+                        } else {
+                            0.0f
                         }
+
+                        setProgress(progress)
                     }
                 }
             }
@@ -80,7 +77,7 @@ open class DownloadTask(
         destination
     }
 
-    private fun checkHash(file: Path, expectedHash: String): Boolean {
+    protected fun checkHash(file: Path, expectedHash: String): Boolean {
         val digest = MessageDigest.getInstance("SHA-1")
         Files.newInputStream(file).use { inputStream ->
             val buffer = ByteArray(8192)
