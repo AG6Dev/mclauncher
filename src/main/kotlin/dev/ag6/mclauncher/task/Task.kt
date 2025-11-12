@@ -25,6 +25,8 @@ interface Task<T> {
 
     fun setState(state: State) {
         Platform.runLater { stateProperty.set(state) }
+    fun cancel() {
+        this.stateProperty.set(State.CANCELLED)
     }
 
     enum class State {
