@@ -37,5 +37,17 @@ enum class Type {
     OLD_BETA,
 
     @SerializedName("old_alpha")
-    OLD_ALPHA
+    OLD_ALPHA;
+
+    companion object {
+        fun fromString(value: String): Type {
+            return when (value.lowercase()) {
+                "release" -> RELEASE
+                "snapshot" -> SNAPSHOT
+                "old_beta" -> OLD_BETA
+                "old_alpha" -> OLD_ALPHA
+                else -> throw IllegalArgumentException("Unknown type: $value")
+            }
+        }
+    }
 }

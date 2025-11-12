@@ -27,7 +27,7 @@ class InstancesView : View {
             onKeyTyped = EventHandler {
                 val query = text.lowercase()
                 instanceList.filterItems { instance ->
-                    instance.name.get().lowercase().contains(query)
+                    instance.name.lowercase().contains(query)
                 }
             }
         }

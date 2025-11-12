@@ -2,9 +2,10 @@ package dev.ag6.mclauncher
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import dev.ag6.ktconfig.Konfig
+import dev.ag6.konfig.Konfig
 import dev.ag6.mclauncher.instance.InstanceManager
 import dev.ag6.mclauncher.minecraft.MinecraftVersionHandler
+import dev.ag6.mclauncher.minecraft.piston.*
 import dev.ag6.mclauncher.util.getDefaultDataLocation
 import dev.ag6.mclauncher.util.getRefreshRate
 import dev.ag6.mclauncher.view.ContentManager
@@ -63,7 +64,13 @@ class MCLauncher : Application() {
 
         val LOGGER = KotlinLogging.logger("MCLauncher")
         val HTTP_CLIENT = OkHttpClient()
-        val GSON: Gson = GsonBuilder().serializeNulls().setPrettyPrinting().create()
+        val GSON: Gson = GsonBuilder()
+            .registerTypeAdapter(GameArgument::class.java, GameArgumentDeserializer())
+            .registerTypeAdapter(JvmArgument::class.java, JvmArgumentDeserializer())
+            .registerTypeAdapter(ArgumentValue::class.java, ArgumentValueDeserializer())
+            .serializeNulls()
+            .setPrettyPrinting()
+            .create()
     }
 }
 
