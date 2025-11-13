@@ -3,20 +3,8 @@ package dev.ag6.mclauncher.minecraft.piston
 import com.google.gson.JsonObject
 
 data class PistonLibrary(val name: String, val download: Download?, val rules: List<LibraryRule>?) {
-    fun getDirectory(): String {
-        val parts = name.split(":")
-        val group = parts[0].replace('.', '/')
-        val artifact = parts[1]
-        val version = parts[2]
-        return "$group/$artifact/$version/"
-    }
-
     fun getJarPath(): String {
-        val parts = name.split(":")
-        val group = parts[0].replace('.', '/')
-        val artifact = parts[1]
-        val version = parts[2]
-        return "$group/$artifact/$version/$artifact-$version.jar"
+        return download?.path!!
     }
 
     companion object {
