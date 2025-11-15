@@ -1,14 +1,14 @@
 package dev.ag6.mclauncher.task
 
 import dev.ag6.mclauncher.MCLauncher
-import dev.ag6.mclauncher.minecraft.piston.Download
+import dev.ag6.mclauncher.util.verifyFileSHA1
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.Request
-import java.nio.file.Files
 import java.nio.file.Path
-import java.security.MessageDigest
+import kotlin.io.path.createParentDirectories
+import kotlin.io.path.deleteIfExists
 import kotlin.io.path.outputStream
 
 open class DownloadTask(
@@ -17,27 +17,20 @@ open class DownloadTask(
     private val destination: Path,
     private val sha1Hash: String? = null
 ) : Task<Path> {
-    constructor(name: String, destination: Path, download: Download) : this(
-        name,
-        download.url,
-        destination,
-        download.sha1
-    )
-
     override suspend fun execute(): Path = withContext(Dispatchers.IO) {
         if (isCancelled()) throw CancellationException("Task cancelled")
 
         setState(Task.State.RUNNING)
 
-        Files.createDirectories(destination.parent)
+        destination.createParentDirectories()
 
         val request = Request.Builder().get().url(url).build()
-        MCLauncher.HTTP_CLIENT.newCall(request).execute().use {
-            if (!it.isSuccessful) {
-                throw IllegalStateException("Failed to download file from $url: ${it.code}")
+        MCLauncher.HTTP_CLIENT.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) {
+                throw IllegalStateException("Failed to download file from $url: ${response.code}")
             }
 
-            val body = it.body
+            val body = response.body
             val size = body.contentLength()
 
             body.byteStream().use { stream ->
@@ -66,8 +59,10 @@ open class DownloadTask(
         }
 
         sha1Hash?.let {
-            if (!checkHash(destination, it)) {
-                throw IllegalStateException("SHA-1 hash mismatch for downloaded file from $url")
+            if (!verifyFileSHA1(destination, it)) {
+                destination.deleteIfExists()
+                setState(Task.State.FAILED)
+                throw IllegalStateException("SHA-1 hash mismatch for downloaded file from $url, deleted file.")
             }
         }
 
@@ -76,19 +71,4 @@ open class DownloadTask(
 
         destination
     }
-
-    protected fun checkHash(file: Path, expectedHash: String): Boolean {
-        val digest = MessageDigest.getInstance("SHA-1")
-        Files.newInputStream(file).use { inputStream ->
-            val buffer = ByteArray(8192)
-            var bytesRead: Int
-            while (inputStream.read(buffer).also { bytesRead = it } != -1) {
-                digest.update(buffer, 0, bytesRead)
-            }
-        }
-
-        val fileHash = digest.digest().joinToString("") { "%02x".format(it) }
-        return fileHash.equals(expectedHash, ignoreCase = true)
-    }
-
 }

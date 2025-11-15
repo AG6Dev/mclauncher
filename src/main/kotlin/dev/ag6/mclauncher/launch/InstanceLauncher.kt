@@ -1,66 +1,41 @@
 package dev.ag6.mclauncher.launch
 
 import dev.ag6.mclauncher.instance.GameInstance
-import dev.ag6.mclauncher.launch.tasks.DownloadLibraryTask
-import dev.ag6.mclauncher.launch.tasks.GetVersionMetadataTask
-import dev.ag6.mclauncher.minecraft.piston.PistonLibrary
-import dev.ag6.mclauncher.minecraft.piston.PistonVersionMetadata
+import dev.ag6.mclauncher.launch.tasks.FetchAssetIndexTask
+import dev.ag6.mclauncher.launch.tasks.FetchLibraryTask
+import dev.ag6.mclauncher.launch.tasks.FetchMinecraftJarTask
+import dev.ag6.mclauncher.launch.tasks.FetchVersionMetadataTask
 import dev.ag6.mclauncher.task.CompositeTask
 import dev.ag6.mclauncher.task.TaskExecutor
 import dev.ag6.mclauncher.util.getDefaultDataLocation
 import kotlinx.coroutines.runBlocking
-import java.nio.file.Files
 import java.nio.file.Path
 
 object InstanceLauncher {
     val METADATA_CACHE_LOCATION: Path = getDefaultDataLocation().resolve("version_meta")
     val LIBRARY_LOCATION: Path = getDefaultDataLocation().resolve("libraries")
+    val CLIENTS_LOCATION: Path = getDefaultDataLocation().resolve("client")
+    val ASSETS_LOCATION: Path = getDefaultDataLocation().resolve("assets")
+
     private val executor: TaskExecutor = TaskExecutor(8)
     private val launchProcesses: MutableMap<GameInstance, Process> = mutableMapOf()
 
     fun launchInstance(gameInstance: GameInstance) = runBlocking {
-        val metadataTask = GetVersionMetadataTask(gameInstance.version()!!)
+        val metadataTask = FetchVersionMetadataTask(gameInstance.version()!!)
         val metadata = executor.submit(metadataTask).await()
 
-        println(metadata.libraries.size)
-        val libTasks: List<DownloadLibraryTask> = getLibrariesToDownload(metadata).map(::DownloadLibraryTask)
-        println(libTasks.size)
+        val libTasks = metadata.libraries.map(::FetchLibraryTask)
         val libraryTask = CompositeTask("Download MC Libraries", true, libTasks)
         executor.submit(libraryTask).await()
+
+        val clientJarTask = FetchMinecraftJarTask(metadata)
+        val clientJar = executor.submit(clientJarTask).await()
+
+        val assetTask = FetchAssetIndexTask(metadata)
+        val assetIndex = executor.submit(assetTask).await()
     }
 
     fun prepareInstance(gameInstance: GameInstance) {
 
-    }
-
-    private fun getLibrariesToDownload(meta: PistonVersionMetadata): List<PistonLibrary> {
-        return meta.libraries.filter {
-            var allowed = false
-            try {
-                if (it.download == null) return@filter false
-
-                val rules = it.rules ?: return@filter true
-
-                val os = System.getProperty("os.name").lowercase()
-                val osName = when {
-                    os.contains("win") -> "windows"
-                    os.contains("mac") -> "osx"
-                    else -> "linux"
-                }
-
-
-                for (rule in rules) {
-                    val osRule = rule.os
-                    if (osRule.name == osName) {
-                        allowed = rule.action == PistonLibrary.LibraryRule.Action.ALLOW
-                    }
-                }
-
-                allowed && !Files.exists(LIBRARY_LOCATION.resolve(it.getJarPath()))
-            } catch (e: Exception) {
-                allowed
-            }
-
-        }
     }
 }

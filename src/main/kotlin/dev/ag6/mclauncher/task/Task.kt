@@ -1,6 +1,5 @@
 package dev.ag6.mclauncher.task
 
-import javafx.application.Platform
 import javafx.beans.property.FloatProperty
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleFloatProperty
@@ -20,11 +19,11 @@ interface Task<T> {
     }
 
     fun setProgress(progress: Float) {
-        Platform.runLater { progressProperty.set(progress) }
+        progressProperty.set(progress)
     }
 
     fun setState(state: State) {
-        Platform.runLater { stateProperty.set(state) }
+        stateProperty.set(state)
     }
 
     fun cancel() {
