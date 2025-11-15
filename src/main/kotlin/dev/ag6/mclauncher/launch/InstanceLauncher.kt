@@ -1,10 +1,7 @@
 package dev.ag6.mclauncher.launch
 
 import dev.ag6.mclauncher.instance.GameInstance
-import dev.ag6.mclauncher.launch.tasks.FetchAssetIndexTask
-import dev.ag6.mclauncher.launch.tasks.FetchLibraryTask
-import dev.ag6.mclauncher.launch.tasks.FetchMinecraftJarTask
-import dev.ag6.mclauncher.launch.tasks.FetchVersionMetadataTask
+import dev.ag6.mclauncher.launch.tasks.*
 import dev.ag6.mclauncher.task.CompositeTask
 import dev.ag6.mclauncher.task.TaskExecutor
 import dev.ag6.mclauncher.util.getDefaultDataLocation
@@ -33,6 +30,10 @@ object InstanceLauncher {
 
         val assetTask = FetchAssetIndexTask(metadata)
         val assetIndex = executor.submit(assetTask).await()
+
+        val assetTasks = assetIndex.assets.values.map(::DownloadAssetTask)
+        val assetsDownloadTask = CompositeTask("Download MC Assets", true, assetTasks)
+        executor.submit(assetsDownloadTask).await()
     }
 
     fun prepareInstance(gameInstance: GameInstance) {
