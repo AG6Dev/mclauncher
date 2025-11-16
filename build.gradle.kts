@@ -2,7 +2,6 @@ plugins {
     id("java")
     id("application")
     id("org.openjfx.javafxplugin") version "0.0.13"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
     id("org.jetbrains.kotlin.jvm")
 }
 
@@ -40,11 +39,8 @@ tasks.jar {
             "Main-Class" to "dev.ag6.mclauncher.MCLauncherKt"
         )
     }
-}
 
-tasks.shadowJar {
-    mergeServiceFiles()
-    archiveClassifier.set("")
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
 }
 
 application {
