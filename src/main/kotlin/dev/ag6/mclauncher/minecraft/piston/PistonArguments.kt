@@ -6,20 +6,11 @@ import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 
-data class PistonArguments(val arguments: Arguments)
+data class PistonArguments(val game: List<Argument>, val jvm: List<Argument>)
 
-data class Arguments(
-    val game: List<GameArgument>, val jvm: List<JvmArgument>
-)
-
-sealed class GameArgument {
-    data class Simple(val value: String) : GameArgument()
-    data class Conditional(val argument: ConditionalArgument) : GameArgument()
-}
-
-sealed class JvmArgument {
-    data class Simple(val value: String) : JvmArgument()
-    data class Conditional(val argument: ConditionalArgument) : JvmArgument()
+sealed class Argument {
+    data class Simple(val value: String) : Argument()
+    data class Conditional(val argument: ConditionalArgument) : Argument()
 }
 
 data class ConditionalArgument(
@@ -43,26 +34,14 @@ data class OsRule(
     val name: String? = null, val arch: String? = null
 )
 
-class GameArgumentDeserializer : JsonDeserializer<GameArgument> {
+class ArgumentDeserializer : JsonDeserializer<Argument> {
     override fun deserialize(
         json: JsonElement, typeOfT: Type, context: JsonDeserializationContext
-    ): GameArgument {
+    ): Argument {
         return if (json.isJsonPrimitive) {
-            GameArgument.Simple(json.asString)
+            Argument.Simple(json.asString)
         } else {
-            GameArgument.Conditional(context.deserialize(json, ConditionalArgument::class.java))
-        }
-    }
-}
-
-class JvmArgumentDeserializer : JsonDeserializer<JvmArgument> {
-    override fun deserialize(
-        json: JsonElement, typeOfT: Type, context: JsonDeserializationContext
-    ): JvmArgument {
-        return if (json.isJsonPrimitive) {
-            JvmArgument.Simple(json.asString)
-        } else {
-            JvmArgument.Conditional(context.deserialize(json, ConditionalArgument::class.java))
+            Argument.Conditional(context.deserialize(json, ConditionalArgument::class.java))
         }
     }
 }

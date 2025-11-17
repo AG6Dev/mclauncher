@@ -50,6 +50,10 @@ data class GameInstance(
         return json
     }
 
+    fun getMinecraftDirectory(): Path {
+        return directory.resolve(".minecraft")
+    }
+
     override fun toString(): String {
         return "GameInstance(id=$id, name='$name', version=${version()?.id}, javaPath=$javaPath, directory=$directory, lastPlayed=$lastPlayed, additionalArgs=$additionalArgs, memoryAllocation=$memoryAllocation)"
     }

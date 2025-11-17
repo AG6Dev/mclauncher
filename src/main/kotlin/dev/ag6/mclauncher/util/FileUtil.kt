@@ -10,11 +10,10 @@ import kotlin.io.path.inputStream
 
 fun getDefaultDataLocation(): Path {
     val userHome = System.getProperty("user.home")
-    val osName = System.getProperty("os.name").lowercase()
 
-    return when {
-        osName.contains("win") -> Paths.get(System.getenv("APPDATA"), "MCLauncher")
-        osName.contains("mac") -> Paths.get(userHome, "Library", "Application Support", "MCLauncher")
+    return when (OperatingSystem.CURRENT_OS) {
+        OperatingSystem.WINDOWS -> Paths.get(System.getenv("APPDATA"), "MCLauncher")
+        OperatingSystem.MAC -> Paths.get(userHome, "Library", "Application Support", "MCLauncher")
         else -> Paths.get(userHome, ".mclauncher")
     }
 }
