@@ -3,6 +3,7 @@ package dev.ag6.mclauncher.instance
 import dev.ag6.mclauncher.MCLauncher
 import dev.ag6.mclauncher.minecraft.MinecraftVersion
 import dev.ag6.mclauncher.util.getDefaultDataLocation
+import dev.ag6.mclauncher.util.toPath
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import java.nio.file.Files
@@ -34,8 +35,11 @@ object InstanceManager {
     }
 
     fun createInstance(name: String, version: MinecraftVersion): GameInstance {
-        val newInstance = GameInstance(name = name, version = { version }, directory = INSTANCE_DIRECTORY.resolve(name))
+        val newInstance =
+            GameInstance(name = name, version = { version }, directory = INSTANCE_DIRECTORY.resolve(name).toString())
+        newInstance.createDirectories()
         newInstance.save()
+
         instances.add(newInstance)
         return newInstance
     }
@@ -47,8 +51,8 @@ object InstanceManager {
     fun deleteInstance(instance: GameInstance) {
         try {
             val instanceDir = instance.directory
-            if (Files.exists(instanceDir)) {
-                Files.walk(instanceDir)
+            if (Files.exists(instanceDir.toPath())) {
+                Files.walk(instanceDir.toPath())
                     .sorted(Comparator.reverseOrder())
                     .forEach(Files::delete)
             }

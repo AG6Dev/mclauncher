@@ -13,7 +13,7 @@ fun getDefaultDataLocation(): Path {
 
     return when (OperatingSystem.CURRENT_OS) {
         OperatingSystem.WINDOWS -> Paths.get(System.getenv("APPDATA"), "MCLauncher")
-        OperatingSystem.MAC -> Paths.get(userHome, "Library", "Application Support", "MCLauncher")
+        OperatingSystem.MACOS -> Paths.get(userHome, "Library", "Application Support", "MCLauncher")
         else -> Paths.get(userHome, ".mclauncher")
     }
 }
@@ -39,3 +39,5 @@ fun getResourceStream(path: String): InputStream? {
 fun getResource(path: String): URL? {
     return MCLauncher::class.java.classLoader.getResource(path)
 }
+
+fun String.toPath(): Path = Path.of(this)

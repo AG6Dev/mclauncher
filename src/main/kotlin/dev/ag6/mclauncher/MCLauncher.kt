@@ -46,6 +46,10 @@ class MCLauncher : Application() {
         ContentManager.changeView(InstancesView())
         ContentManager.show()
 
+        val map = HashMap<String, String>()
+        map.entries
+
+
         //temporary
         primaryStage.scene.setOnKeyPressed { event ->
             if (event.code == KeyCode.F1) {

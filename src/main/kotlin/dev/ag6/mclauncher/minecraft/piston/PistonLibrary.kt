@@ -1,10 +1,22 @@
 package dev.ag6.mclauncher.minecraft.piston
 
 import com.google.gson.JsonObject
+import dev.ag6.mclauncher.util.OperatingSystem
 
 data class PistonLibrary(val name: String, val download: Download?, val rules: List<LibraryRule>?) {
     fun getJarPath(): String {
         return download?.path!!
+    }
+
+    fun isAllowedForSystem(): Boolean {
+        if (rules == null) return true
+
+        for (rule in rules) {
+            if (rule.os == OperatingSystem.CURRENT_OS && rule.action == LibraryRule.Action.ALLOW) {
+                return true
+            }
+        }
+        return false
     }
 
     companion object {
@@ -27,7 +39,7 @@ data class PistonLibrary(val name: String, val download: Download?, val rules: L
         }
     }
 
-    data class LibraryRule(val action: Action, val os: OperatingSystem) {
+    data class LibraryRule(val action: Action, val os: OperatingSystem?) {
         companion object {
             fun fromJson(json: JsonObject): LibraryRule {
                 val action = when (json.get("action").asString) {
@@ -38,9 +50,9 @@ data class PistonLibrary(val name: String, val download: Download?, val rules: L
 
                 val os = if (json.has("os")) {
                     val osJson = json.getAsJsonObject("os")
-                    OperatingSystem(osJson.get("name").asString)
+                    OperatingSystem.getOsFromString(osJson.get("name").asString)
                 } else {
-                    OperatingSystem("any")
+                    null
                 }
 
                 return LibraryRule(action, os)
@@ -50,7 +62,5 @@ data class PistonLibrary(val name: String, val download: Download?, val rules: L
         enum class Action {
             ALLOW, DISALLOW
         }
-
-        data class OperatingSystem(val name: String)
     }
 }

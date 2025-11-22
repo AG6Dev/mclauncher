@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import dev.ag6.mclauncher.MCLauncher
 import dev.ag6.mclauncher.minecraft.MinecraftVersion
 import dev.ag6.mclauncher.minecraft.MinecraftVersionHandler
+import dev.ag6.mclauncher.util.toPath
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
@@ -12,19 +13,25 @@ data class GameInstance(
     val id: UUID = UUID.randomUUID(),
     var name: String,
     var version: () -> MinecraftVersion?,
-    var javaPath: Path? = null,
-    var directory: Path,
+    var javaPath: String? = null,
+    var directory: String,
     var lastPlayed: String? = null,
     var additionalArgs: List<String> = emptyList(),
     var memoryAllocation: Int? = 2048
 ) {
+    fun createDirectories() {
+        val dir = directory.toPath()
+
+        Files.createDirectories(dir)
+        Files.createDirectories(dir.resolve(".minecraft"))
+    }
 
     fun save() {
         try {
-            Files.createDirectories(directory)
+            Files.createDirectories(directory.toPath())
             val json = this.toJson()
 
-            val instanceConfigFile = directory.resolve("instance.json")
+            val instanceConfigFile = directory.toPath().resolve("instance.json")
             Files.newBufferedWriter(instanceConfigFile).use { writer ->
                 MCLauncher.GSON.toJson(json, writer)
             }
@@ -38,8 +45,8 @@ data class GameInstance(
         json.addProperty("id", id.toString())
         json.addProperty("name", name)
         json.addProperty("version", version()?.id)
-        javaPath?.let { json.addProperty("javaPath", it.toString()) }
-        json.addProperty("directory", directory.toString())
+        javaPath?.let { json.addProperty("javaPath", it) }
+        json.addProperty("directory", directory)
         lastPlayed?.let { json.addProperty("lastPlayed", it) }
         if (additionalArgs.isNotEmpty()) {
             val argsArray = com.google.gson.JsonArray()
@@ -51,7 +58,7 @@ data class GameInstance(
     }
 
     fun getMinecraftDirectory(): Path {
-        return directory.resolve(".minecraft")
+        return Files.createDirectories(directory.toPath().resolve(".minecraft"))
     }
 
     override fun toString(): String {
@@ -66,8 +73,8 @@ data class GameInstance(
             val versionProvider = {
                 MinecraftVersionHandler.getVersion(versionId)
             }
-            val javaPath = if (json.has("javaPath")) Path.of(json.get("javaPath").asString) else null
-            val directory = Path.of(json.get("directory").asString)
+            val javaPath = if (json.has("javaPath")) json.get("javaPath").asString else null
+            val directory = json.get("directory").asString
             val lastPlayed = if (json.has("lastPlayed")) json.get("lastPlayed").asString else null
             val additionalArgs = if (json.has("additionalArgs")) {
                 json.getAsJsonArray("additionalArgs").map { it.asString }

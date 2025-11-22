@@ -3,6 +3,7 @@ package dev.ag6.mclauncher.view.instance_settings
 import dev.ag6.mclauncher.instance.GameInstance
 import dev.ag6.mclauncher.view.View
 import dev.ag6.mclauncher.view.components.ContentBackButton
+import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.control.Label
 import javafx.scene.control.TextField
@@ -27,6 +28,10 @@ class InstanceSettingsView(private val instance: GameInstance) : View {
 
         val javaPath = TextField().apply {
             promptText = "Java Path"
+            onKeyTyped = EventHandler {
+                instance.javaPath = text
+                instance.save()
+            }
         }
 
         val optionsContainer = VBox().apply {

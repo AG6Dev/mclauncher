@@ -6,6 +6,7 @@ import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 
+//TODO: Redo this lol
 data class PistonArguments(val game: List<Argument>, val jvm: List<Argument>)
 
 sealed class Argument {
